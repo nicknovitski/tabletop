@@ -22,7 +22,7 @@ module DicePool
       end
     end
     describe "+" do
-      it "should result in Pool objects" do
+      it "should join Pools into new Pools" do
         merge = @mixed + @d17s
         merge.class == Pool
       end
@@ -40,10 +40,14 @@ module DicePool
         (@d17s + @d6).dice.should == "d6 5d17"
         (@d17s + @mixed).dice.should == "2d10 5d17 d20"
       end
-      it "should reject adding anything but other pools" do
+      it "should understand adding a number as looking for a sum result" do
+        (@d17s + 5).should == 53
+        (@mixed + @d6 + 10).should == 34
+        #(@mixed + 4.5).should == 26.5
+      end
+      it "should reject adding anything else" do
         lambda {@d6 + "foof"}.should raise_error(ArgumentError)
         lambda {@d6 + [Die.new]}.should raise_error(ArgumentError)
-        lambda {@d6 + 22}.should raise_error(ArgumentError)
       end
     end
     describe "#results" do

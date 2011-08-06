@@ -5,8 +5,6 @@ module DicePool
   class Pool < DelegateClass(Array)
     def initialize(init_dice)
       return super(init_dice) if init_dice.class == Array
-      # otherwise, it's a string
-      @string = init_dice
       d_groups = init_dice.split
       dice = []
       d_groups.each do |d_notation|
@@ -18,8 +16,13 @@ module DicePool
       super(dice)
     end
     def +(operator)
-      raise ArgumentError unless operator.class == Pool 
-      Pool.new([self, operator].flatten)
+      if operator.class == Pool 
+        Pool.new([self, operator].flatten)
+      elsif operator.kind_of? Numeric
+        sum + operator
+      else
+        raise ArgumentError, "Cannot add operator of class #{operator.class}"
+      end
     end
     def results
       map {|die| die.result}

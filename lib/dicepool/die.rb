@@ -2,7 +2,12 @@ module DicePool
   class Die
     attr_reader :sides, :result
     def initialize(sides=6)
-      raise ArgumentError if (sides <= 0 or sides.class != Fixnum)
+      if sides <= 0
+        raise ArgumentError, "Die cannot have #{sides} sides"
+      end
+      unless sides.kind_of? Integer
+        raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
+      end
       @sides = sides
       @result = roll
     end
