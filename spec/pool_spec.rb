@@ -9,11 +9,11 @@ module DicePool
       @mixed = Pool.new("2d10 d20") 
     end
     describe "#dice" do
-      it "knows what dice it has" do
-        @mixed.dice.should == "2d10 d20"
-        @d6.dice.should == "d6"
-        @d17s.dice.should == "5d17"
-        Pool.new("d20 2d10").dice.should == "2d10 d20"
+      it "should return an array of dice notation" do
+        @mixed.dice.should == ["2d10","d20"]
+        @d6.dice.should == ["d6"]
+        @d17s.dice.should == ["5d17"]
+        Pool.new("d20 2d10").dice.should == ["2d10","d20"]
       end
     end
     describe "[]" do
@@ -36,9 +36,9 @@ module DicePool
         @d6 = Pool.new("d6")
         @d17s = Pool.new("5d17")
         @mixed = Pool.new("2d10 d20")
-        (@d6 + @d17s).dice.should == "d6 5d17"
-        (@d17s + @d6).dice.should == "d6 5d17"
-        (@d17s + @mixed).dice.should == "2d10 5d17 d20"
+        (@d6 + @d17s).dice.should == ["d6", "5d17"]
+        (@d17s + @d6).dice.should == ["d6", "5d17"]
+        (@d17s + @mixed).dice.should == ["2d10","5d17","d20"]
       end
       it "should understand adding a number as looking for a sum result" do
         (@d17s + 5).should == 53

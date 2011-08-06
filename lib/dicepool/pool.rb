@@ -32,13 +32,12 @@ module DicePool
       each do |die|
         result[die.sides] = count {|d| d.sides == die.sides}
       end
-      collection = result.sort.collect do |d_group| 
+      result.sort.collect do |d_group| 
         number = d_group[1]
         number = "" if number == 1
         sides = d_group[0]
         "#{number}d#{sides}"
       end
-      collection.join(" ")
     end
     def roll
       each do |die|
