@@ -89,5 +89,57 @@ module DicePool
         ore.sets.should == ["2x10", "2x9", "2x3", "1x8", "1x7", "1x5", "1x1"]
       end
     end
+    describe "#highest" do
+      it "should return a pool of the highest-value die" do
+        @d6.highest.class.should == Pool
+        @d6.highest.results.should == [2]
+        @d17s.highest.results.should == [17]
+        @mixed.highest.results.should == [11]
+      end
+      it "should return as many items as are specified" do
+        @d6.highest(5).results.should == [2]
+        @d17s.highest(3).results.should == [17, 16, 9]
+        @mixed.highest(2).results.should == [11, 10]
+      end
+    end
+    describe "#lowest" do
+      it "should return a pool of the lowest-value die." do
+        @d6.lowest.results.should == [2]
+        @d17s.lowest.class.should == Pool
+        @d17s.lowest.results.should == [1]
+        @mixed.lowest.results.should == [1]
+      end
+      it "should return as many items as are specified" do
+          @d6.lowest(5).results.should == [2]
+          @d17s.lowest(3).results.should == [1, 5, 9]
+          @mixed.lowest(2).results.should == [1, 10]
+      end
+    end
+    describe "#drop_highest" do
+      it "should return a new pool missing the highest result" do
+        p = @d17s.drop_highest
+        p.results.should == [5, 16, 1, 9]
+        @d17s.results.should == [5, 16, 1, 17, 9]
+      end
+      it "should drop as many items as are specified and are possible" do
+        p = @d17s.drop_highest(2)
+        p.results.should == [5, 1, 9]
+        p = @d6.drop_highest(10)
+        p.results.should == []
+      end
+    end
+    describe "#drop_lowest" do
+      it "should return a pool missing the lowest result" do
+        p = @d17s.drop_lowest
+        p.results.should == [5, 16, 17, 9]
+        @d17s.results.should == [5, 16, 1, 17, 9]
+      end
+      it "should drop as many items as are specified" do
+        p = @d17s.drop_lowest(2)
+        p.results.should == [16, 17, 9]
+      end
+    end
+    context "pool has been emptied" do
+    end
   end
 end

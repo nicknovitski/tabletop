@@ -55,19 +55,21 @@ module DicePool
       end
       result.sort_by{|height, width| [width, height] }.collect {|i| i[1].to_s+"x"+i[0].to_s}.reverse
     end
-    def highest
-      max {|a, b| a.result <=> b.result}
+    def highest(n=1)
+      sorted = sort_by {|d| d.result}.reverse
+      Pool.new(sorted.first(n))
     end
-    def lowest
-      min {|a, b| a.result <=> b.result}
+    def lowest(n=1)
+      sorted = sort_by {|d| d.result}
+      Pool.new(sorted.first(n))
     end
     def drop_highest(n=1)
       return self if n <= 0
-      Pool.new(self-[highest]).drop_highest(n-1)
+      Pool.new(self-highest).drop_highest(n-1)
     end
     def drop_lowest(n=1)
       return self if n<=0
-      Pool.new(self-[lowest]).drop_lowest(n-1)
+      Pool.new(self-lowest).drop_lowest(n-1)
     end
   end
 end
