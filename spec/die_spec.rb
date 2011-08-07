@@ -3,7 +3,7 @@ require 'spec_helper.rb'
 module DicePool
   describe Die do
     describe "#sides" do
-      it "is the only init parameter" do
+      it "can be accessed" do
         d = Die.new(6)
         d.sides.should == 6
         d = Die.new(20)
@@ -29,13 +29,36 @@ module DicePool
       before :each do
         Random.srand(10)
       end
-      it "should be random on instantiation" do 
+      it "should be random on instantiation by default" do 
         d = Die.new
         d.result.should equal(2)
         d = Die.new(10)
         d.result.should equal(5)
         d = Die.new(50)
         d.result.should equal(16)
+      end
+      it "can be set to a given value on instantiation" do
+        Die.new(6, 5).result.should == 5
+        Die.new(10, 2).result.should == 2
+      end
+      it "can be set to a new value" do
+        d = Die.new
+        d.result = 6
+        d.result.should == 6
+      end
+      it "can only be set to an integer i, where 0 < i <= sides" do
+        d = Die.new
+        lambda { d.result = 0 }.should raise_error(ArgumentError)
+        lambda { d.result = -5 }.should raise_error(ArgumentError)
+        lambda { d.result = 7 }.should raise_error(ArgumentError)
+        d = Die.new(10)
+        d.result = 7
+        lambda { d.result = 22 }.should raise_error(ArgumentError)
+      end
+      it "cannot be a non-integer" do
+        lambda { Die.new(0.1) }.should raise_error(ArgumentError)
+        lambda { Die.new(5.7694) }.should raise_error(ArgumentError)
+        lambda { Die.new("foof") }.should raise_error(ArgumentError)
       end
     end
     describe "#roll" do
