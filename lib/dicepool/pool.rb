@@ -64,12 +64,10 @@ module DicePool
       Pool.new(sorted.first(n))
     end
     def drop_highest(n=1)
-      return self if n <= 0
-      Pool.new(self-highest).drop_highest(n-1)
+      Pool.new(self-highest(n))
     end
     def drop_lowest(n=1)
-      return self if n<=0
-      Pool.new(self-lowest).drop_lowest(n-1)
+      Pool.new(self-lowest(n))
     end
   end
 end
