@@ -14,5 +14,8 @@ module DicePool
     def roll
       @result = rand(sides)+1
     end
+    def inspect
+      "#{@result} (d#{@sides})"
+    end
   end
 end

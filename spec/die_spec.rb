@@ -83,5 +83,14 @@ module DicePool
         end
       end      
     end
+    describe "#inspect" do
+      before(:each) do
+        Random.srand(10)
+      end
+      it "should be interesting" do
+        Die.new.inspect.should == "2 (d6)"
+        Die.new.inspect.should == "6 (d6)"
+      end
+    end
   end
 end
