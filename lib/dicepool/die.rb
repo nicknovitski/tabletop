@@ -29,7 +29,7 @@ module DicePool
     
     protected
     def valid_result?(result)
-      result > 0 and result < @sides
+      result > 0 and result <= @sides
     end
   end
   
