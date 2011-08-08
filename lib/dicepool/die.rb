@@ -9,7 +9,11 @@ module DicePool
         raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
       end
       @sides = sides
-      result ||= roll
+      if result.nil?
+        result = roll
+      else
+        raise ArgumentError unless valid_result?(result)
+      end
       @result = result
     end
     def roll
@@ -19,31 +23,30 @@ module DicePool
       "#{@result} (d#{@sides})"
     end
     def result=(new_result)
-      raise ArgumentError if (new_result <=0 or new_result > @sides) 
+      raise ArgumentError unless valid_result?(new_result)  
       @result = new_result
+    end
+    
+    protected
+    def valid_result?(result)
+      result > 0 and result < @sides
     end
   end
   
   class FudgeDie < Die
     def initialize(result = nil)
-      @sides = 3
-      if result.nil?
-        roll
-      elsif [1, 0, -1].include?(result)
-        @result = result
-      else
-        raise ArgumentError
-      end
+      super(3, result)
     end
     def roll
       @result = rand(sides)-1
     end
-    def result=(new_result)
-      raise ArgumentError unless [1,0,-1].include?(new_result)
-      @result = new_result
-    end
     def inspect
       "[#{['-', ' ', '+'][@result+1]}] (dF)"
+    end
+    
+    protected
+    def valid_result?(result)
+      [1,0,-1].include?(result)
     end
   end
 end
