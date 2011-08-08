@@ -161,13 +161,13 @@ module DicePool
         p.results.should == [16, 17, 9]
       end
     end
-    describe "#ignore" do
+    describe "#drop" do
       it "should drop any dice of the specified value" do
         ore = Pool.new("10d10")
         ore.results.should == [4, 1, 5, 7, 9, 2, 9, 5, 2, 4]
-        at_least_two = ore.ignore(1)
+        at_least_two = ore.drop(1)
         at_least_two.results.should == [4, 5, 7, 9, 2, 9, 5, 2, 4]
-        at_least_three = ore.ignore([1,2])
+        at_least_three = ore.drop([1,2])
         at_least_three.results.should == [4, 5, 7, 9, 9, 5, 4]
       end
     end
