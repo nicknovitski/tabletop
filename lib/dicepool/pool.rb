@@ -16,12 +16,11 @@ module DicePool
       super(dice)
     end
     def +(operator)
-      if operator.class == Pool 
-        Pool.new([self, operator].flatten)
+      # if the operator is a pool, or an array only of Die objects...
+      if operator.class == Pool or (operator.class == Array and !(operator.detect{|obj| obj.class != DicePool::Die}))
+        new_union(operator)
       elsif operator.kind_of? Numeric
         sum + operator
-      elsif operator.class == Array and !(operator.detect{|obj| obj.class != DicePool::Die})
-        Pool.new([self, operator].flatten)
       else
         raise ArgumentError, "Cannot add operator of class #{operator.class}"
       end
@@ -70,6 +69,14 @@ module DicePool
     end
     def drop_lowest(n=1)
       Pool.new(self-lowest(n))
+    end
+    
+    private
+    def new_union(array)
+      union = [self, array].flatten
+      new_pool =[]
+      union.each { |die| new_pool << Die.new(die.sides, die.result) }
+      Pool.new(new_pool)
     end
   end
 end
