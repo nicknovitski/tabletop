@@ -9,9 +9,13 @@ module DicePool
       dice = []
       d_groups.each do |d_notation|
         number, sides = d_notation.split('d')
-        number, sides = number.to_i, sides.to_i
+        number = number.to_i
         number += 1 if number == 0
-        number.times { dice << Die.new(sides)}
+        if sides.to_i > 0
+          number.times { dice << Die.new(sides.to_i)}
+        elsif sides == "F"
+          number.times {dice << FudgeDie.new}
+        end
       end
       super(dice)
     end
@@ -29,16 +33,25 @@ module DicePool
       map {|die| die.result}
     end
     def dice
+      fudge = nil
       result = {}
       each do |die|
-        result[die.sides] = count {|d| d.sides == die.sides}
+        if die.class == FudgeDie
+          fudge = count {|d| d.class == FudgeDie}
+        else
+          result[die.sides] = count {|d| d.sides == die.sides}
+        end
       end
-      result.sort.collect do |d_group| 
+      d_array = result.sort.collect do |d_group| 
         number = d_group[1]
         number = "" if number == 1
         sides = d_group[0]
         "#{number}d#{sides}"
       end
+      if fudge
+        d_array << "#{fudge}dF"
+      end
+      d_array
     end
     def roll
       each do |die|
@@ -75,7 +88,13 @@ module DicePool
     def new_union(array)
       union = [self, array].flatten
       new_pool =[]
-      union.each { |die| new_pool << Die.new(die.sides, die.result) }
+      union.each do |die| 
+        if die.class == FudgeDie
+          new_pool << FudgeDie.new(die.result)
+        else
+          new_pool << Die.new(die.sides, die.result)
+        end
+      end
       Pool.new(new_pool)
     end
   end

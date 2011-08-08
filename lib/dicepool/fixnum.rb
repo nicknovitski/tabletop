@@ -3,9 +3,12 @@ require 'dicepool'
 class Fixnum
   def dX(sides)
     dice = []
-    times do
-      dice << DicePool::Die.new(sides)
-    end
+    times { dice << DicePool::Die.new(sides) }
+    DicePool::Pool.new(dice)
+  end
+  def dF
+    dice = []
+    times {dice << DicePool::FudgeDie.new}
     DicePool::Pool.new(dice)
   end
   def method_missing(symbol, *args, &block)

@@ -7,37 +7,42 @@ module DicePool
       @d6 = Pool.new("d6")
       @d17s = Pool.new("5d17")
       @mixed = Pool.new("2d10 d20") 
+      @fudge = Pool.new("3dF")
     end
     describe "#dice" do
       it "should return an array of dice notation" do
         @mixed.dice.should == ["2d10","d20"]
         @d6.dice.should == ["d6"]
         @d17s.dice.should == ["5d17"]
-        Pool.new("d20 2d10").dice.should == ["2d10","d20"]
+        @fudge.dice.should == ["3dF"]
+        Pool.new("d20 2dF 2d10").dice.should == ["2d10","d20", "2dF"]
       end
     end
     describe "[]" do
       it "should access Die objects" do
         @d6[0].class.should == Die
+        @fudge[0].class.should == FudgeDie
       end
     end
     describe "+" do
       it "should join Pools into new Pools" do
-        merge = @mixed + @d17s
-        merge.class == Pool
+        (@mixed + @d17s).class == Pool
+        (@d6 + @fudge).class == Pool
+      end
+      it "should persist die types" do
+        (@d6 + @fudge)[1].class.should == FudgeDie
       end
       it "should join pools without rolling them" do
         merge = @d6 + @d17s
         merge.results.should == [2, 5, 16, 1, 17, 9]
         merge.roll
-        merge.results.should == [1, 5, 17, 5, 16, 12]
+        merge.results.should == [4, 17, 5, 16, 12, 12]
       end
       it "creates genuinely new pools" do
         merge = @d6 + @d17s
         merge.roll
         @d6.results.should == [2]
         @d17s.results.should == [5, 16, 1, 17, 9]
-        
       end
       
       it "should alter #dice accordingly" do
@@ -47,10 +52,12 @@ module DicePool
         (@d6 + @d17s).dice.should == ["d6", "5d17"]
         (@d17s + @d6).dice.should == ["d6", "5d17"]
         (@d17s + @mixed).dice.should == ["2d10","5d17","d20"]
+        (@mixed + @fudge).dice.should == ["2d10", "d20", "3dF"]
       end
       it "should understand adding a number as looking for a sum result" do
         (@d17s + 5).should == 53
         (@mixed + @d6 + 10).should == 34
+        (@fudge + 3).should == 2
       end
       it "should add literal dice arrays as if they were pools" do
         g = @d6 + [Die.new(6,3), Die.new(10, 4)]
@@ -73,17 +80,17 @@ module DicePool
     end
     describe "#roll" do
       it "should return the new value" do
-        @d6.roll.should == [1]
-        @d17s.roll.should == [5, 17, 5, 16, 12]
-        @mixed.roll.should == [7, 9, 12]
+        @d6.roll.should == [4]
+        @d17s.roll.should == [17, 5, 16, 12, 12]
+        @mixed.roll.should == [2, 9, 5]
       end
       it "should store the new values" do
         @d6.roll
-        @d6.results.should == [1]
+        @d6.results.should == [4]
         @d17s.roll
-        @d17s.results.should == [5, 17, 5, 16, 12]
+        @d17s.results.should == [17, 5, 16, 12, 12]
         @mixed.roll
-        @mixed.results.should == [7, 9, 12]
+        @mixed.results.should == [2, 9, 5]
       end
     end
     describe "#sum" do
@@ -91,16 +98,17 @@ module DicePool
         @d6.sum.should == 2 
         @d17s.sum.should == 48
         @mixed.sum.should == 22
+        @fudge.sum.should == -1
       end
     end
     describe "#sets" do
       it "should list the sets, in order by height and width" do
         ore = Pool.new("10d10")
-        ore.sets.should == ["3x9", "2x7","2x5","1x4","1x2","1x1"]
+        ore.sets.should == ["2x9", "2x5", "2x4", "2x2", "1x7", "1x1"]
         ore.roll
-        ore.sets.should == ["2x10", "2x7", "2x4", "2x2", "1x6", "1x5"]
+        ore.sets.should == ["3x10", "2x7", "1x6", "1x5", "1x4", "1x3", "1x2"]
         ore.roll
-        ore.sets.should == ["2x10", "2x9", "2x3", "1x8", "1x7", "1x5", "1x1"]
+        ore.sets.should == ["3x9", "2x8", "2x7", "1x10", "1x3", "1x1"]
       end
     end
     describe "#highest" do
