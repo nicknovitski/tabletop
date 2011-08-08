@@ -1,4 +1,4 @@
-require 'dicepool'
+require_relative 'die'
 require 'delegate'
 
 module DicePool
@@ -20,6 +20,8 @@ module DicePool
         Pool.new([self, operator].flatten)
       elsif operator.kind_of? Numeric
         sum + operator
+      elsif operator.class == Array and !(operator.detect{|obj| obj.class != DicePool::Die})
+        Pool.new([self, operator].flatten)
       else
         raise ArgumentError, "Cannot add operator of class #{operator.class}"
       end

@@ -43,12 +43,17 @@ module DicePool
       it "should understand adding a number as looking for a sum result" do
         (@d17s + 5).should == 53
         (@mixed + @d6 + 10).should == 34
-        #(@mixed + 4.5).should == 26.5
+      end
+      it "should add literal dice arrays as if they were pools" do
+        g = @d6 + [Die.new(6,3), Die.new(10, 4)]
+        g.results.should == [2, 3, 4]
+        g.dice.should == ["2d6", "d10"]
       end
       it "should reject adding anything else" do
         lambda {@d6 + "foof"}.should raise_error(ArgumentError)
-        lambda {@d6 + [Die.new]}.should raise_error(ArgumentError)
+        lambda {@d6 + [Die.new, Object.new]}.should raise_error(ArgumentError)
       end
+      it "creates genuinely new pools of different dice, whose changing values do not change its operators"
     end
     describe "#results" do
       it "should be an array of random numbers" do
