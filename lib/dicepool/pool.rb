@@ -83,6 +83,11 @@ module DicePool
     def drop_lowest(n=1)
       Pool.new(self-lowest(n))
     end
+    def drop(to_drop)
+      to_drop = [to_drop].flatten #turn it into an array if it isn't one.
+      kept = reject{|die| to_drop.any?{|drop_value| die.result == drop_value }}
+      return Pool.new(kept)
+    end
     
     private
     def new_union(array)
