@@ -112,6 +112,12 @@ module DicePool
         Die.new.inspect.should == "6 (d6)"
       end
     end
+    describe "#to_int" do
+      it "returns the result" do
+        d = Die.new
+        d.to_int.should == d.result
+      end
+    end
   end
   describe FudgeDie do
     before(:each) do
