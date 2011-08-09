@@ -100,6 +100,12 @@ module DicePool
         @mixed.sum.should == 22
         @fudge.sum.should == -1
       end
+      it "should be aliased to #to_int" do
+        @d6.to_int.should == @d6.sum 
+        @d17s.to_int.should == @d17s.sum
+        @mixed.to_int.should == @mixed.sum
+        @fudge.to_int.should == @fudge.sum
+      end
     end
     describe "#sets" do
       it "should list the sets, in order by height and width" do
