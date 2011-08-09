@@ -1,3 +1,3 @@
-require 'dicepool/die'
-require 'dicepool/pool'
-require 'dicepool/fixnum'
+require_relative 'dicepool/fixnum'
+require_relative 'dicepool/die'
+require_relative 'dicepool/pool'

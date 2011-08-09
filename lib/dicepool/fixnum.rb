@@ -1,4 +1,5 @@
-require 'dicepool'
+require_relative 'pool'
+require_relative 'die'
 
 class Fixnum
   def dX(sides)
