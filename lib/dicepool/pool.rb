@@ -62,6 +62,9 @@ module DicePool
     def sum
       inject(0) {|sum, d| sum + d.result}
     end
+    def to_int
+      sum
+    end
     def sets
       result = {}
       each do |die|

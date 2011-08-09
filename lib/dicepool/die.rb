@@ -26,6 +26,9 @@ module DicePool
       raise ArgumentError unless valid_result?(new_result)  
       @result = new_result
     end
+    def to_int
+      @result
+    end
     
     protected
     def valid_result?(result)
