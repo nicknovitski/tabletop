@@ -2,6 +2,10 @@ require 'spec_helper.rb'
 
 module DicePool
   describe Die do
+    before :each do
+      @d6_2 = Die.new(6, 2)
+      @d6_3 = Die.new(6, 3)
+    end
     describe "#sides" do
       it "can be accessed" do
         d = Die.new(6)
@@ -116,6 +120,27 @@ module DicePool
       it "returns the result" do
         d = Die.new
         d.to_int.should == d.result
+      end
+    end
+    describe "<=>" do
+      it "compares numeric objects with the die's value" do
+        (@d6_3 < 4).should be_true
+        (@d6_3 < 2).should be_false
+        (@d6_3 > 2).should be_true
+        (@d6_3 > 4).should be_false
+        (@d6_3 >= 3).should be_true
+        (@d6_3 >= 10).should be_false
+        (@d6_3 <= 3).should be_true
+        (@d6_3 <= 2).should be_false
+        (@d6_3 == 3).should be_true
+        (@d6_3 == 6).should be_false
+      end
+      it "compares dice with each other by value" do
+        (@d6_3 > @d6_2).should be_true
+        (@d6_3 < @d6_2).should be_false
+        (@d6_2 < @d6_3).should be_true
+        (@d6_2 > @d6_3).should be_false
+        (@d6_3 == @d6_2).should be_false
       end
     end
   end
