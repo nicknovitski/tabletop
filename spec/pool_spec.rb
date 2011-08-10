@@ -107,6 +107,17 @@ module DicePool
         @fudge.to_int.should == @fudge.sum
       end
     end
+    describe "<=>" do
+      it "should compare the sums of different pools" do
+        @d17s.should >= @d6
+        @d6.should < Pool.new([Die.new(4, 4)])
+      end
+      it "should compare pools to numbers" do
+        @d6.should < 10
+        @d6.should == 2
+        @d17s.should <= 49
+      end
+    end
     describe "#sets" do
       it "should list the sets, in order by height and width" do
         ore = Pool.new("10d10")

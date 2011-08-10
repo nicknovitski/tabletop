@@ -3,6 +3,7 @@ require 'delegate'
 
 module DicePool
   class Pool < DelegateClass(Array)
+    include Comparable
     def initialize(init_dice)
       return super(init_dice) if init_dice.class == Array
       d_groups = init_dice.split
@@ -29,6 +30,11 @@ module DicePool
         raise ArgumentError, "Cannot add operator of class #{operator.class}"
       end
     end
+    
+    def <=>(operand)
+        sum <=> operand.to_int
+    end
+      
     def results
       map {|die| die.result}
     end
