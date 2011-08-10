@@ -1,5 +1,6 @@
 module DicePool
   class Die
+    include Comparable
     attr_reader :sides, :result
     def initialize(sides=6, result=nil)
       if sides <= 0
@@ -25,6 +26,9 @@ module DicePool
     def result=(new_result)
       raise ArgumentError unless valid_result?(new_result)  
       @result = new_result
+    end
+    def <=>(operand)
+      @result <=> operand.to_int
     end
     def to_int
       @result
