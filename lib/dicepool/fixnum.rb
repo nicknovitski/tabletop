@@ -19,9 +19,9 @@ class Fixnum
       super
     end
   end
-  def self.respond_to?(symbol, include_private = false)
-    if method_sym.to_s =~ /^d(.*)$/
-      true if $1.to_i >= 0
+  def respond_to?(symbol, include_private = false)
+    if symbol.to_s =~ /^d(.*)$/
+      true if $1.to_i > 0
     else
       super
     end
