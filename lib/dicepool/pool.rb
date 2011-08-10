@@ -19,14 +19,14 @@ module DicePool
       end
       super(dice)
     end
-    def +(operator)
+    def +(operand)
       # if the operator is a pool, or an array only of Die objects...
-      if operator.class == Pool or (operator.class == Array and !(operator.detect{|obj| obj.class != DicePool::Die}))
-        new_union(operator)
-      elsif operator.kind_of? Numeric
-        sum + operator
+      if operand.class == Pool or (operand.class == Array and !(operand.detect{|obj| obj.class != DicePool::Die}))
+        new_union(operand)
+      elsif operand.kind_of? Numeric
+        sum + operand
       else
-        raise ArgumentError, "Cannot add operator of class #{operator.class}"
+        raise ArgumentError, "Cannot add operand of class #{operand.class}"
       end
     end
     def results
