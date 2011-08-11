@@ -1,6 +1,6 @@
-require 'spec_helper.rb'
+require 'spec_helper'
 
-module DicePool
+module Tabletop
   describe Die do
     before :each do
       @d6_2 = Die.new(6, 2)

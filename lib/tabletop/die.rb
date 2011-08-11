@@ -1,4 +1,4 @@
-module DicePool
+module Tabletop
   class Die
     include Comparable
     attr_reader :sides, :result

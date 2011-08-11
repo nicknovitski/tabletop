@@ -1,16 +1,15 @@
-require_relative 'pool'
-require_relative 'die'
+require 'tabletop'
 
 class Fixnum
   def dX(sides)
     dice = []
-    times { dice << DicePool::Die.new(sides) }
-    DicePool::Pool.new(dice)
+    times { dice << Tabletop::Die.new(sides) }
+    Tabletop::Pool.new(dice)
   end
   def dF
     dice = []
-    times {dice << DicePool::FudgeDie.new}
-    DicePool::Pool.new(dice)
+    times {dice << Tabletop::FudgeDie.new}
+    Tabletop::Pool.new(dice)
   end
   def method_missing(symbol, *args, &block)
     if symbol =~ /^d(.*)$/

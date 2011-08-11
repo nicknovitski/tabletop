@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module DicePool
+module Tabletop
   describe Fixnum do
     describe "#dX" do
       it "generates a pool of the appropriate size and type" do

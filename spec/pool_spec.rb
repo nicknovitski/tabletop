@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module DicePool
+module Tabletop
   describe Pool do
     before :each do
       Random.srand(10)

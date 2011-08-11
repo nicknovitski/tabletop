@@ -1,7 +1,7 @@
 require_relative 'die'
 require 'delegate'
 
-module DicePool
+module Tabletop
   class Pool < DelegateClass(Array)
     include Comparable
     def initialize(init_dice)
@@ -22,7 +22,7 @@ module DicePool
     end
     def +(operand)
       # if the operator is a pool, or an array only of Die objects...
-      if operand.class == Pool or (operand.class == Array and !(operand.detect{|obj| obj.class != DicePool::Die}))
+      if operand.class == Pool or (operand.class == Array and !(operand.detect{|obj| obj.class != Die}))
         new_union(operand)
       elsif operand.kind_of? Numeric
         sum + operand
