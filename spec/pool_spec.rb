@@ -79,10 +79,9 @@ module Tabletop
       end
     end
     describe "#roll" do
-      it "should return the new value" do
-        @d6.roll.should == [4]
-        @d17s.roll.should == [17, 5, 16, 12, 12]
-        @mixed.roll.should == [2, 9, 5]
+      it "should return the Pool itself" do
+        @d6.roll.length.should == @d6.length
+        @d6.roll.class.should == @d6.class
       end
       it "should store the new values" do
         @d6.roll
