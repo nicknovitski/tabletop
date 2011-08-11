@@ -1,7 +1,11 @@
-require 'spec_helper.rb'
+require 'spec_helper'
 
-module DicePool
+module Tabletop
   describe Die do
+    before :each do
+      @d6_2 = Die.new(6, 2)
+      @d6_3 = Die.new(6, 3)
+    end
     describe "#sides" do
       it "can be accessed" do
         d = Die.new(6)
@@ -41,11 +45,13 @@ module DicePool
         Die.new(6, 5).result.should == 5
         Die.new(10, 2).result.should == 2
       end
-      it "can be set to a new value" do
-        d = Die.new
-        d.result = 6
-        d.result.should == 6
+      it "cannot be a non-integer" do
+        lambda { Die.new(0.1) }.should raise_error(ArgumentError)
+        lambda { Die.new(5.7694) }.should raise_error(ArgumentError)
+        lambda { Die.new("foof") }.should raise_error(ArgumentError)
       end
+    end
+    describe "#result=" do
       it "can only be set to an integer i, where 0 < i <= sides" do
         d = Die.new
         lambda { d.result = 0 }.should raise_error(ArgumentError)
@@ -54,11 +60,6 @@ module DicePool
         d = Die.new(10)
         d.result = 7
         lambda { d.result = 22 }.should raise_error(ArgumentError)
-      end
-      it "cannot be a non-integer" do
-        lambda { Die.new(0.1) }.should raise_error(ArgumentError)
-        lambda { Die.new(5.7694) }.should raise_error(ArgumentError)
-        lambda { Die.new("foof") }.should raise_error(ArgumentError)
       end
     end
     describe "#roll" do
@@ -113,6 +114,75 @@ module DicePool
       it "should be interesting" do
         Die.new.inspect.should == "2 (d6)"
         Die.new.inspect.should == "6 (d6)"
+      end
+    end
+    describe "#to_int" do
+      it "returns the result" do
+        d = Die.new
+        d.to_int.should == d.result
+      end
+    end
+    describe "<=>" do
+      it "compares numeric objects with the die's value" do
+        (@d6_3 < 4).should be_true
+        (@d6_3 < 2).should be_false
+        (@d6_3 > 2).should be_true
+        (@d6_3 > 4).should be_false
+        (@d6_3 >= 3).should be_true
+        (@d6_3 >= 10).should be_false
+        (@d6_3 <= 3).should be_true
+        (@d6_3 <= 2).should be_false
+        (@d6_3 == 3).should be_true
+        (@d6_3 == 6).should be_false
+      end
+      it "compares dice with each other by value" do
+        (@d6_3 > @d6_2).should be_true
+        (@d6_3 < @d6_2).should be_false
+        (@d6_2 < @d6_3).should be_true
+        (@d6_2 > @d6_3).should be_false
+        (@d6_3 == @d6_2).should be_false
+      end
+    end
+  end
+  describe FudgeDie do
+    before(:each) do
+      Random.srand(10)
+      @fudge = FudgeDie.new
+    end
+    describe "#sides" do
+      it "is always 3" do
+        @fudge.sides.should == 3
+      end
+    end
+    describe "#result" do
+      it "can be set on instantiation" do
+        FudgeDie.new(1).result.should == 1
+        FudgeDie.new(0).result.should == 0
+        FudgeDie.new(-1).result.should == -1
+      end
+      it "is randomly rolled if not set" do
+        @fudge.result.should == 0
+      end
+      it "can only be one of either -1, 0, or 1" do
+        lambda {FudgeDie.new(2)}.should raise_error(ArgumentError)
+        lambda {FudgeDie.new(0.6)}.should raise_error(ArgumentError)
+        lambda {FudgeDie.new("5")}.should raise_error(ArgumentError)
+      end
+    end
+    describe "#result=" do
+      it "cannot be set to anything but -1, 0, or 1" do
+        lambda {@fudge.result = 2}.should raise_error(ArgumentError)
+        lambda {@fudge.result = 0.6}.should raise_error(ArgumentError)
+        lambda {@fudge.result = "5"}.should raise_error(ArgumentError)
+        @fudge.result = 1
+        @fudge.result.should == 1
+      end
+    end
+    describe "#inspect" do
+      it "should look like plusses, minuses and spaces" do
+        FudgeDie.new(1).inspect.should == "[+] (dF)"
+        FudgeDie.new(0).inspect.should == "[ ] (dF)"
+        FudgeDie.new(-1).inspect.should == "[-] (dF)"
       end
     end
   end
