@@ -63,7 +63,7 @@ module Tabletop
       each do |die|
         die.roll
       end
-      results
+      self
     end
     def sum
       inject(0) {|sum, d| sum + d.result}
