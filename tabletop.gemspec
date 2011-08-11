@@ -20,8 +20,11 @@ Gem::Specification.new do |s|
   s.rubygems_version = '1.3.7'
   s.specification_version = 3
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
+  ignores = File.readlines(".gitignore").grep(/\S+/).map {|s| s.chomp }
+  dotfiles = [".gitignore"]
+  
+  s.files = Dir["**/*"].reject {|f| File.directory?(f) || ignores.any? {|i| File.fnmatch(i, f) } } + dotfiles
+  s.test_files = s.files.grep(/^spec\//)
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec'
