@@ -35,7 +35,7 @@ module Tabletop
         sum <=> operand.to_int
     end
       
-    def results
+    def values
       map {|die| die.value}
     end
     def dice
