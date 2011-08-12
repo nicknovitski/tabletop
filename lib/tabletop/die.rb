@@ -3,7 +3,7 @@ module Tabletop
     include Comparable
     attr_reader :sides, :value
     def initialize(sides=6, init_value=nil)
-      if sides <= 0
+      if sides <= 1
         raise ArgumentError, "Die cannot have #{sides} sides"
       end
       unless sides.kind_of? Integer

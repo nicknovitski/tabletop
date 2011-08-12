@@ -15,8 +15,9 @@ module Tabletop
       it "is 6 by default" do
         Die.new.sides.should == 6
       end
-      it "cannot be 0 or less" do
+      it "cannot be 1 or less" do
         lambda { Die.new(0) }.should raise_error(ArgumentError)
+        lambda { Die.new(1) }.should raise_error(ArgumentError)
         lambda { Die.new(-5) }.should raise_error(ArgumentError)
       end
       it "cannot be a non-integer" do
