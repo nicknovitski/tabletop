@@ -60,8 +60,9 @@ module Tabletop
         it "can count successes" do
           @exalted.roll(:pool=>10)
           10.times do
-            sux = @exalted.pool.count {|die| die.result >= 7 } + @exalted.pool.count {|die| die.result == 10 } 
-            @exalted.effects.should == [sux, nil]
+            successes = @exalted.pool.count {|die| die.value >= 7 } 
+            successes += @exalted.pool.count {|die| die.value == 10 } 
+            @exalted.effects.should == [successes, nil]
           end
         end
       end

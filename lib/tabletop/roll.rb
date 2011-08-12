@@ -100,8 +100,8 @@ module Tabletop
         @count_at_least = args[:at_least]
         @count_doubles = args[:doubles]
         def result
-          normal = @pool.count {|die| die.result >= @count_at_least}
-          extra = @count_doubles ? @pool.count {|die| die.result == @count_doubles} : 0
+          normal = @pool.count {|die| die.value >= @count_at_least}
+          extra = @count_doubles ? @pool.count {|die| die.value == @count_doubles} : 0
           normal + extra
         end
       else

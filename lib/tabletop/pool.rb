@@ -35,8 +35,8 @@ module Tabletop
         sum <=> operand.to_int
     end
       
-    def results
-      map {|die| die.result}
+    def values
+      map {|die| die.value}
     end
     def dice
       fudge = nil
@@ -66,7 +66,7 @@ module Tabletop
       self
     end
     def sum
-      inject(0) {|sum, d| sum + d.result}
+      inject(0) {|sum, d| sum + d.value}
     end
     def to_int
       sum
@@ -74,17 +74,15 @@ module Tabletop
     def sets
       result = {}
       each do |die|
-        result[die.result] = count {|d| d.result == die.result}
+        result[die.value] = count {|d| d.value == die.value}
       end
       result.sort_by{|height, width| [width, height] }.collect {|i| i[1].to_s+"x"+i[0].to_s}.reverse
     end
     def highest(n=1)
-      sorted = sort_by {|d| d.result}.reverse
-      Pool.new(sorted.first(n))
+      Pool.new(sort.reverse.first(n))
     end
     def lowest(n=1)
-      sorted = sort_by {|d| d.result}
-      Pool.new(sorted.first(n))
+      Pool.new(sort.first(n))
     end
     def drop_highest(n=1)
       Pool.new(self-highest(n))
@@ -94,7 +92,7 @@ module Tabletop
     end
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
-      kept = reject{|die| to_drop.any?{|drop_value| die.result == drop_value }}
+      kept = reject{|die| to_drop.any?{|drop_value| die.value == drop_value }}
       return Pool.new(kept)
     end
     
@@ -104,9 +102,9 @@ module Tabletop
       new_pool =[]
       union.each do |die| 
         if die.class == FudgeDie
-          new_pool << FudgeDie.new(die.result)
+          new_pool << FudgeDie.new(die.value)
         else
-          new_pool << Die.new(die.sides, die.result)
+          new_pool << Die.new(die.sides, die.value)
         end
       end
       Pool.new(new_pool)
