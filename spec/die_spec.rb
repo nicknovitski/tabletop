@@ -8,16 +8,12 @@ module Tabletop
     end
     describe "#sides" do
       it "can be accessed" do
-        d = Die.new(6)
-        d.sides.should == 6
-        d = Die.new(20)
-        d.sides.should == 20
-        d = Die.new(7)
-        d.sides.should equal(7)
+        (2..10).each do |i|
+          Die.new(i).sides.should == i
+        end
       end
       it "is 6 by default" do
-        d = Die.new
-        d.sides.should equal(6)
+        Die.new.sides.should == 6
       end
       it "cannot be 0 or less" do
         lambda { Die.new(0) }.should raise_error(ArgumentError)
@@ -30,16 +26,11 @@ module Tabletop
       end
     end
     describe "#value" do
-      before :each do
-        Random.srand(10)
-      end
       it "should be random on instantiation by default" do 
-        d = Die.new
-        d.value.should equal(2)
-        d = Die.new(10)
-        d.value.should equal(5)
-        d = Die.new(50)
-        d.value.should equal(16)
+        Random.srand(10)
+        Die.new.value.should == 2
+        Die.new(10).value.should == 5
+        Die.new(50).value.should == 16
       end
       it "can be set to a given value on instantiation" do
         Die.new(6, 5).value.should == 5
@@ -67,23 +58,18 @@ module Tabletop
         Random.srand(10)
       end
       context "six sides" do
+        before(:each) do
+          @d6 = Die.new #=> 2
+        end
         it "should return a random result between 1 and @sides" do
-          d = Die.new
-          #d.roll.should == 2 # This result gets swallowed by the init roll
-          d.roll.should == 6
-          d.roll.should == 5
-          d.roll.should == 1
+          @d6.roll.should == 6
+          @d6.roll.should == 5
+          @d6.roll.should == 1
         end
         it "should alter the value appropriately" do
-          d = Die.new
-          #d.roll # Covered by the initial roll
-          d.value.should == 2 
-          d.roll
-          d.value.should == 6
-          d.roll
-          d.value.should == 5
-          d.roll
-          d.value.should == 1
+          10.times do
+            @d6.roll.should == @d6.value
+          end
         end
       end      
     end
@@ -104,23 +90,12 @@ module Tabletop
     end
     describe "<=>" do
       it "compares numeric objects with the die's value" do
-        (@d6_3 < 4).should be_true
-        (@d6_3 < 2).should be_false
-        (@d6_3 > 2).should be_true
-        (@d6_3 > 4).should be_false
-        (@d6_3 >= 3).should be_true
-        (@d6_3 >= 10).should be_false
-        (@d6_3 <= 3).should be_true
-        (@d6_3 <= 2).should be_false
-        (@d6_3 == 3).should be_true
-        (@d6_3 == 6).should be_false
+        (1..10).each do |i|
+          (@d6_3 <=> i) == (3 <=> i)
+        end
       end
       it "compares dice with each other by value" do
-        (@d6_3 > @d6_2).should be_true
-        (@d6_3 < @d6_2).should be_false
-        (@d6_2 < @d6_3).should be_true
-        (@d6_2 > @d6_3).should be_false
-        (@d6_3 == @d6_2).should be_false
+        (@d6_3 <=> @d6_2) == (3 <=> 2)
       end
     end
   end
@@ -144,6 +119,9 @@ module Tabletop
         @fudge.value.should == 0
       end
       it "can only be one of either -1, 0, or 1" do
+        [-1, 0, 1].each do |v|
+          FudgeDie.new(v)
+        end
         lambda {FudgeDie.new(2)}.should raise_error(ArgumentError)
         lambda {FudgeDie.new(0.6)}.should raise_error(ArgumentError)
         lambda {FudgeDie.new("5")}.should raise_error(ArgumentError)
@@ -154,8 +132,9 @@ module Tabletop
         lambda {@fudge.value = 2}.should raise_error(ArgumentError)
         lambda {@fudge.value = 0.6}.should raise_error(ArgumentError)
         lambda {@fudge.value = "5"}.should raise_error(ArgumentError)
-        @fudge.value = 1
-        @fudge.value.should == 1
+        [-1, 0, 1].each do |v|
+          @fudge.value = v
+        end
       end
     end
     describe "#inspect" do
