@@ -8,6 +8,7 @@ module Tabletop
         4.d7.dice.should == ["4d7"]
         10.d100.class.should == Pool
       end
+      
       it "shows up in respond_to?(:dN)" do
         1.respond_to?(:d50).should be_true
       end

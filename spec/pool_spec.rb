@@ -9,6 +9,7 @@ module Tabletop
       @mixed = Pool.new("2d10 d20") 
       @fudge = Pool.new("3dF")
     end
+    
     describe "#dice" do
       it "should return an array of dice notation" do
         @mixed.dice.should == ["2d10","d20"]
@@ -18,26 +19,31 @@ module Tabletop
         Pool.new("d20 2dF 2d10").dice.should == ["2d10","d20", "2dF"]
       end
     end
+    
     describe "[]" do
       it "should access Die objects" do
         @d6[0].class.should == Die
         @fudge[0].class.should == FudgeDie
       end
     end
+    
     describe "+" do
       it "should join Pools into new Pools" do
         (@mixed + @d17s).class == Pool
         (@d6 + @fudge).class == Pool
       end
+      
       it "should persist die types" do
         (@d6 + @fudge)[1].class.should == FudgeDie
       end
+      
       it "should join pools without rolling them" do
         merge = @d6 + @d17s
         merge.values.should == [2, 5, 16, 1, 17, 9]
         merge.roll
         merge.values.should == [4, 17, 5, 16, 12, 12]
       end
+      
       it "creates genuinely new pools" do
         merge = @d6 + @d17s
         merge.roll
@@ -54,11 +60,13 @@ module Tabletop
         (@d17s + @mixed).dice.should == ["2d10","5d17","d20"]
         (@mixed + @fudge).dice.should == ["2d10", "d20", "3dF"]
       end
+      
       it "should understand adding a number as looking for a sum result" do
         (@d17s + 5).should == 53
         (@mixed + @d6 + 10).should == 34
         (@fudge + 3).should == 2
       end
+      
       it "should add literal dice arrays as if they were pools" do
         g = @d6 + [Die.new(6,3), Die.new(10, 4)]
         g.values.should == [2, 3, 4]
@@ -66,11 +74,13 @@ module Tabletop
         g.roll
         @d6.values.should == [2]
       end
+      
       it "should reject adding anything else" do
         lambda {@d6 + "foof"}.should raise_error(ArgumentError)
         lambda {@d6 + [Die.new, Object.new]}.should raise_error(ArgumentError)
       end
     end
+    
     describe "#values" do
       it "should be an array of random numbers" do
         @d6.values.should == [2]
@@ -78,11 +88,13 @@ module Tabletop
         @mixed.values.should == [10, 1, 11]
       end
     end
+    
     describe "#roll" do
       it "should return the Pool itself" do
         @d6.roll.length.should == @d6.length
         @d6.roll.class.should == @d6.class
       end
+      
       it "should store the new values" do
         @d6.roll
         @d6.values.should == [4]
@@ -92,31 +104,36 @@ module Tabletop
         @mixed.values.should == [2, 9, 5]
       end
     end
+    
     describe "#sum" do
       it "should sum the dice values" do
-        @d6.sum.should == 2 
-        @d17s.sum.should == 48
-        @mixed.sum.should == 22
-        @fudge.sum.should == -1
+        5.times do
+          p = 10.d6
+          p.sum.should == p.values.inject(:+)
+        end
       end
+      
       it "should be aliased to #to_int" do
-        @d6.to_int.should == @d6.sum 
-        @d17s.to_int.should == @d17s.sum
-        @mixed.to_int.should == @mixed.sum
-        @fudge.to_int.should == @fudge.sum
+        5.times do
+          p = 10.d6
+          p.to_int.should == p.sum
+        end
       end
     end
+    
     describe "<=>" do
       it "should compare the sums of different pools" do
         @d17s.should >= @d6
         @d6.should < Pool.new([Die.new(4, 4)])
       end
+      
       it "should compare pools to numbers" do
         @d6.should < 10
         @d6.should == 2
         @d17s.should <= 49
       end
     end
+    
     describe "#sets" do
       it "should list the sets, in order by height and width" do
         ore = Pool.new("10d10")
@@ -127,6 +144,7 @@ module Tabletop
         ore.sets.should == ["3x9", "2x8", "2x7", "1x10", "1x3", "1x1"]
       end
     end
+    
     describe "#highest" do
       it "should return a pool of the highest-value die" do
         @d6.highest.class.should == Pool
@@ -134,12 +152,14 @@ module Tabletop
         @d17s.highest.values.should == [17]
         @mixed.highest.values.should == [11]
       end
+      
       it "should return as many items as are specified" do
         @d6.highest(5).values.should == [2]
         @d17s.highest(3).values.should == [17, 16, 9]
         @mixed.highest(2).values.should == [11, 10]
       end
     end
+    
     describe "#lowest" do
       it "should return a pool of the lowest-value die." do
         @d6.lowest.values.should == [2]
@@ -147,18 +167,21 @@ module Tabletop
         @d17s.lowest.values.should == [1]
         @mixed.lowest.values.should == [1]
       end
+      
       it "should return as many items as are specified" do
           @d6.lowest(5).values.should == [2]
           @d17s.lowest(3).values.should == [1, 5, 9]
           @mixed.lowest(2).values.should == [1, 10]
       end
     end
+    
     describe "#drop_highest" do
       it "should return a new pool missing the highest result" do
         p = @d17s.drop_highest
         p.values.should == [5, 16, 1, 9]
         @d17s.values.should == [5, 16, 1, 17, 9]
       end
+      
       it "should drop as many items as are specified and are possible" do
         p = @d17s.drop_highest(2)
         p.values.should == [5, 1, 9]
@@ -166,17 +189,20 @@ module Tabletop
         p.values.should == []
       end
     end
+
     describe "#drop_lowest" do
       it "should return a pool missing the lowest result" do
         p = @d17s.drop_lowest
         p.values.should == [5, 16, 17, 9]
         @d17s.values.should == [5, 16, 1, 17, 9]
       end
+      
       it "should drop as many items as are specified" do
         p = @d17s.drop_lowest(2)
         p.values.should == [16, 17, 9]
       end
     end
+
     describe "#drop" do
       it "should drop any dice of the specified value" do
         ore = Pool.new("10d10")
@@ -187,7 +213,9 @@ module Tabletop
         at_least_three.values.should == [4, 5, 7, 9, 9, 5, 4]
       end
     end
+    
     context "pool has been emptied" do
     end
+
   end
 end

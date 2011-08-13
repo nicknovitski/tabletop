@@ -4,7 +4,7 @@ module Tabletop
   describe Roll do
     
     describe "#pool" do
-      it "accceses the roll's pool" do
+      it "accesses the roll's pool" do
         d20 = Roll.new(1.d20) do
         end
         d20.pool.class.should == Pool
@@ -13,9 +13,10 @@ module Tabletop
       end
     end
     
-    context "use it like an attribute or skill roll" do
+    context "when used as an attribute or skill roll" do
       
-      context "Apocalypse World" do
+      context "for Apocalypse World" do
+    
         it "can be used with a static difficulty and dice pool, and both static and dynamic modifiers" do
           cool = 1
           under_fire = Roll.new(2.d6) do
@@ -40,16 +41,18 @@ module Tabletop
         end
       end
       
-      context " in Exalted" do
+      context "in Exalted" do
         before :each do
           @exalted = Roll.new do
             set_result :count, :at_least=>7, :doubles=>10
             sides 10
           end
         end
+        
         def count_successes(pool)
           pool.count {|die| die.value >= 7 } + pool.count {|die| die.value == 10 }
         end
+        
         it "can be instantiated without a complete pool" do
           @exalted.roll(:pool=>6)
           @exalted.pool.length.should == 6
@@ -60,6 +63,7 @@ module Tabletop
           @exalted.pool.length.should == 10
           lambda {@exalted.roll}.should raise_error(ArgumentError)
         end
+        
         it "can count successes" do
           @exalted.roll(:pool=>10)
           10.times do
@@ -79,7 +83,7 @@ module Tabletop
       
     end
     
-    context "use it like a table" do
+    context "when used like a table" do
       
       before :each do
         ill_fortune = Roll.new(1.d10) do
@@ -123,6 +127,8 @@ module Tabletop
           end
         end
       end
+      
+      
     end
     
   end
