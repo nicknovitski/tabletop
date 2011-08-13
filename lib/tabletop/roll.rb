@@ -32,6 +32,11 @@ module Tabletop
     
     def effects
       results = []
+      
+      if @difficulty
+        results << "Success" if result >= @difficulty
+      end
+      
       @conditionals.each do |cond|
         if meets?(cond)
           cond.outcomes.each do |outcome|
@@ -43,9 +48,12 @@ module Tabletop
           end
         end
       end
+      
+          
       if results.empty?
-        results = [nil] 
+        results << nil 
       end
+      
       results.unshift(result)
     end
     
@@ -57,6 +65,9 @@ module Tabletop
         else
           raise ArgumentError
         end
+      end
+      if opts[:difficulty]
+        @difficulty = opts[:difficulty]
       end
       @pool.roll 
     end

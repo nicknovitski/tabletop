@@ -40,12 +40,15 @@ module Tabletop
         end
       end
       
-      context "Exalted" do
+      context " in Exalted" do
         before :each do
           @exalted = Roll.new do
             set_result :count, :at_least=>7, :doubles=>10
             sides 10
           end
+        end
+        def count_successes(pool)
+          pool.count {|die| die.value >= 7 } + pool.count {|die| die.value == 10 }
         end
         it "can be instantiated without a complete pool" do
           @exalted.roll(:pool=>6)
@@ -60,12 +63,19 @@ module Tabletop
         it "can count successes" do
           @exalted.roll(:pool=>10)
           10.times do
-            successes = @exalted.pool.count {|die| die.value >= 7 } 
-            successes += @exalted.pool.count {|die| die.value == 10 } 
-            @exalted.effects.should == [successes, nil]
+            @exalted.effects.should == [count_successes(@exalted.pool), nil]
+          end
+        end
+        
+        it "can determine success" do
+          (1..10).each do |i|
+            @exalted.roll(:pool=>6, :difficulty=>i)
+            effect = (count_successes(@exalted.pool) >= i) ? "Success" : nil
+            @exalted.effects.should == [count_successes(@exalted.pool), effect]
           end
         end
       end
+            
       
     end
     
