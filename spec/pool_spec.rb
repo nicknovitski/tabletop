@@ -103,6 +103,9 @@ module Tabletop
         @mixed.roll
         @mixed.values.should == [2, 9, 5]
       end
+      it "can roll only dice below a certain value"
+      it "can roll only dice above a certain value"
+      it "can roll only dice equal to a certain value"
     end
     
     describe "#sum" do
