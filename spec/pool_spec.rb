@@ -76,8 +76,8 @@ module Tabletop
       end
       
       it "should reject adding anything else" do
-        lambda {@d6 + "foof"}.should raise_error(ArgumentError)
-        lambda {@d6 + [Die.new, Object.new]}.should raise_error(ArgumentError)
+        expect {@d6 + "foof"}.to raise_error(ArgumentError)
+        expect {@d6 + [Die.new, Object.new]}.to raise_error(ArgumentError)
       end
     end
     

@@ -61,7 +61,7 @@ module Tabletop
           end
           @exalted.roll(:pool=>10)
           @exalted.pool.length.should == 10
-          lambda {@exalted.roll}.should raise_error(ArgumentError)
+          expect {@exalted.roll}.to raise_error(ArgumentError)
         end
         
         it "can count successes" do
