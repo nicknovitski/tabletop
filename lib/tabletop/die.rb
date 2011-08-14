@@ -20,9 +20,11 @@ module Tabletop
     def roll
       @value = rand(sides)+1
     end
-    def inspect
-      "#{@value} (d#{@sides})"
+    
+    def to_s
+      "[#{value}]/d#{sides}"
     end
+    
     def value=(new_value)
       raise ArgumentError unless valid_value?(new_value)  
       @value = new_value
@@ -47,10 +49,11 @@ module Tabletop
     def roll
       @value = rand(sides)-1
     end
-    def inspect
-      "[#{['-', ' ', '+'][@value+1]}] (dF)"
-    end
     
+    def to_s
+      "[#{['-', ' ', '+'][@value+1]}]"
+    end
+  
     protected
     def valid_value?(val)
       [1,0,-1].include?(val)

@@ -88,14 +88,12 @@ module Tabletop
       end      
     end
     
-    describe "#inspect" do
-      before(:each) do
-        Random.srand(10)
-      end
-      
-      it "should be interesting" do
-        Die.new.inspect.should == "2 (d6)"
-        Die.new.inspect.should == "6 (d6)"
+    describe "#to_str" do      
+      it "should tell you the die's value" do
+        5.times do
+          d = Die.new(rand(10)+3)
+          "#{d}".should == "[#{d.value}]/d#{d.sides}"
+        end
       end
     end
     
@@ -163,11 +161,11 @@ module Tabletop
       end
     end
     
-    describe "#inspect" do
-      it "should look like plusses, minuses and spaces" do
-        FudgeDie.new(1).inspect.should == "[+] (dF)"
-        FudgeDie.new(0).inspect.should == "[ ] (dF)"
-        FudgeDie.new(-1).inspect.should == "[-] (dF)"
+    describe "#to_s" do
+      it "should return cute little dice with symbols" do
+        FudgeDie.new(1).to_s.should == "[+]"
+        FudgeDie.new(0).to_s.should == "[ ]"
+        FudgeDie.new(-1).to_s.should == "[-]"
       end
     end
   end
