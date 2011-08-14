@@ -41,7 +41,7 @@ module Tabletop
         if meets?(poss)
           poss.outcomes.each do |outcome|
             if Roll === outcome
-              results << outcome.roll
+              results << outcome.roll.effects
             else
               results << outcome
             end
@@ -69,7 +69,8 @@ module Tabletop
       if opts[:difficulty]
         @difficulty = opts[:difficulty]
       end
-      @pool.roll 
+      @pool.roll
+      self 
     end
     
     def meets?(p)

@@ -84,7 +84,36 @@ module Tabletop
     end
     
     context "when used like a table" do
-      
+      it "can have nested results" do
+        rps = Roll.new(1.d3) {
+          equals 1, "rock"
+          equals 2, "paper"
+          equals 3, "scissors"
+        }
+        jkp = Roll.new(1.d3) {
+          equals 1, "guu"
+          equals 2, "choki"
+          equals 3, "paa"
+        }
+        fist_game = Roll.new(1.d2) {
+          equals 1, "Rock Paper Scissors", rps
+          equals 2, "JanKenPon", jkp 
+        }
+        a, b, c = fist_game.roll.effects
+        
+        [1,2].include?(a).should be_true
+        
+        if a == 1
+          b.should == "Rock Paper Scissors"
+        else
+          b.should == "JanKenPon"
+        end
+        
+        [1,2,3].include?(c[0]).should be_true
+        
+        b[1].class.should == String
+        
+      end
       before :each do
         ill_fortune = Roll.new(1.d10) do
           equals 1, "Accident"
