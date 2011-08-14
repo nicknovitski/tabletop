@@ -2,7 +2,7 @@ require_relative 'pool'
 
 module Tabletop
   
-  class Conditional
+  class Possibility
     attr_reader :outcomes, :conditions
     
     def initialize(outcomes, conditions)
@@ -12,14 +12,14 @@ module Tabletop
   end
     
   class Roll
-    attr_reader :pool, :conditionals
+    attr_reader :pool, :possibilities
     
     def initialize(pool=nil, &block)
       if pool
         raise ArgumentError if pool.class != Tabletop::Pool
       end
       @pool = pool
-      @conditionals = []
+      @possibilities = []
       @die_sides = nil
       @static_modifier = 0
       @roll_modifier = 0
@@ -37,9 +37,9 @@ module Tabletop
         results << "Success" if result >= @difficulty
       end
       
-      @conditionals.each do |cond|
-        if meets?(cond)
-          cond.outcomes.each do |outcome|
+      @possibilities.each do |poss|
+        if meets?(poss)
+          poss.outcomes.each do |outcome|
             if Roll === outcome
               results << outcome.roll
             else
@@ -72,15 +72,15 @@ module Tabletop
       @pool.roll 
     end
     
-    def meets?(c)
+    def meets?(p)
       answer = true
-      if c.conditions[:>=]
-        if c.conditions[:>=] > sum
+      if p.conditions[:>=]
+        if p.conditions[:>=] > sum
           answer = false
         end
       end
-      if c.conditions[:==]
-        answer = false if c.conditions[:==] != sum
+      if p.conditions[:==]
+        answer = false if p.conditions[:==] != sum
       end
       answer
     end
@@ -91,18 +91,18 @@ module Tabletop
     
     # instance_eval methods
     
-    ## Conditional-creating methods
+    ## Possibility-creating methods
     def at_least(value, *outcomes)
-      @conditionals << Conditional.new(outcomes, :>= => value)
+      @possibilities << Possibility.new(outcomes, :>= => value)
     end
     
     def equals(values, *outcomes)
       if values.class == Range
         values.each do |val|
-          @conditionals << Conditional.new(outcomes, :== => val)
+          @possibilities << Possibility.new(outcomes, :== => val)
         end
       else
-        @conditionals << Conditional.new(outcomes, :== => values)
+        @possibilities << Possibility.new(outcomes, :== => values)
       end
     end
     
