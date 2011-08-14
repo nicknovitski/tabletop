@@ -1,59 +1,62 @@
 module Tabletop
   class Die
     include Comparable
-    attr_reader :sides, :result
-    def initialize(sides=6, result=nil)
-      if sides <= 0
+    attr_reader :sides, :value
+    def initialize(sides=6, init_value=nil)
+      if sides <= 1
         raise ArgumentError, "Die cannot have #{sides} sides"
       end
       unless sides.kind_of? Integer
         raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
       end
       @sides = sides
-      if result.nil?
-        result = roll
+      if init_value.nil?
+        init_value = roll
       else
-        raise ArgumentError unless valid_result?(result)
+        raise ArgumentError unless valid_value?(init_value)
       end
-      @result = result
+      @value = init_value
     end
     def roll
-      @result = rand(sides)+1
+      @value = rand(sides)+1
     end
-    def inspect
-      "#{@result} (d#{@sides})"
+    
+    def to_s
+      "[#{value}]/d#{sides}"
     end
-    def result=(new_result)
-      raise ArgumentError unless valid_result?(new_result)  
-      @result = new_result
+    
+    def value=(new_value)
+      raise ArgumentError unless valid_value?(new_value)  
+      @value = new_value
     end
     def <=>(operand)
-      @result <=> operand.to_int
+      @value <=> operand.to_int
     end
     def to_int
-      @result
+      @value
     end
     
     protected
-    def valid_result?(result)
-      result > 0 and result <= @sides
+    def valid_value?(val)
+      val > 0 and val <= @sides
     end
   end
   
   class FudgeDie < Die
-    def initialize(result = nil)
-      super(3, result)
+    def initialize(init_value = nil)
+      super(3, init_value)
     end
     def roll
-      @result = rand(sides)-1
-    end
-    def inspect
-      "[#{['-', ' ', '+'][@result+1]}] (dF)"
+      @value = rand(sides)-1
     end
     
+    def to_s
+      "[#{['-', ' ', '+'][@value+1]}]"
+    end
+  
     protected
-    def valid_result?(result)
-      [1,0,-1].include?(result)
+    def valid_value?(val)
+      [1,0,-1].include?(val)
     end
   end
 end
