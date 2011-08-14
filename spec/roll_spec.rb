@@ -20,7 +20,7 @@ module Tabletop
         it "can be used with a static difficulty and dice pool, and both static and dynamic modifiers" do
           cool = 1
           under_fire = Roll.new(2.d6) do
-            modifier cool
+            add cool
             at_least 10, "You do it"
             equals (7..9), "You flinch, hesitate, or stall"
           end

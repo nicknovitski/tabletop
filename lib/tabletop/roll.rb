@@ -124,7 +124,7 @@ module Tabletop
     end
     
     # instance-variable-setting methods
-    def modifier(mod)
+    def add(mod)
       @static_modifier = mod
     end
     
