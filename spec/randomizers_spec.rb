@@ -169,4 +169,36 @@ module Tabletop
       end
     end
   end
+  
+  describe Coin do
+    describe "#sides" do
+      it {subject.sides.should == 2}
+    end
+    
+    describe "#value" do
+      it "can be either 0 or 1" do
+        [0, 1].each do |v|
+          subject.value = v
+        end
+      end
+      
+      it "can't be anything else" do
+        expect {subject.value = "a thing"}.to raise_error(ArgumentError)
+        expect {subject.value = 2}.to raise_error(ArgumentError)
+      end
+    end
+    
+    describe "#flip" do
+      it {subject.flip.class.should == Coin}
+      it "should alias roll" do
+        subject.should_receive(:roll)
+        subject.flip
+      end
+    end
+    
+    describe "#to_s" do
+      it {Coin.new(1).to_s.should == "(+)"}
+      it {Coin.new(0).to_s.should == "( )"}
+    end
+  end
 end

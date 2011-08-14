@@ -1,4 +1,4 @@
-require_relative 'die'
+require_relative 'randomizers'
 require 'delegate'
 
 module Tabletop
