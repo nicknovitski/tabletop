@@ -55,7 +55,7 @@ module Tabletop
         it "decreases the count by that argument" do
           (1..5).each do |i|
             s = TokenStack.new(5)
-            expect {s.remove(i)}.to change{s.count}.from(5).to(5-i)
+            expect {s.remove(i)}.to change{s.count}.by(-i)
           end
         end
         
@@ -84,11 +84,28 @@ module Tabletop
     end
     describe "#move" do
       before :each do
-        @a = TokenStack.new(10)
-        @b = TokenStack.new(10)
+        @a = TokenStack.new
+        @b = TokenStack.new
       end
-      it "removes tokens from the receiving stack"
-      it "adds tokens to the argument stack"
+      it "removes tokens from the receiving stack" do
+        (1..10).each do |v|
+          @a.add(v)
+          expect {@a.move(v, :to =>@b)}.to change{@a.count}.by(-v)
+        end
+      end
+      it "adds tokens to the stack passed as the :to argument" do
+        (1..10).each do |v|
+          @a.add(v)
+          expect {@a.move(v, :to =>@b)}.to change{@b.count}.by(v)
+        end
+      end
+      it "doesn't move any tokens if :to isn't a TokenStack" do
+        expect {@a.move(1, :to => [])}.to raise_error(
+          ArgumentError,
+          /target is Array, not TokenStack/)
+        @a.count.should == 1
+        @b.count.should == 1
+      end
     end
   end
 end

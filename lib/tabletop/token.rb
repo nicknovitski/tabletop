@@ -30,6 +30,12 @@ module Tabletop
       end
       @count -= n
     end
+    
+    def move(n, opts)
+      raise(ArgumentError, "target is #{opts[:to].class}, not TokenStack") unless TokenStack === opts[:to]
+      remove(n)
+      opts[:to].add(n)
+    end
   end
   
 
