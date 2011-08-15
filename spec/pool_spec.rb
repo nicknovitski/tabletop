@@ -81,6 +81,16 @@ module Tabletop
       end
     end
     
+    describe "*" do
+      it "should multiply by the sum of the pool" do
+        (1..10).each do |v|
+          p = Pool.new([Die.new(10, v)])
+          (p * 5).should == (v * 5)
+          (5 * p).should == (5 * v)
+        end
+      end
+    end
+    
     describe "#values" do
       it "should be an array of random numbers" do
         @d6.values.should == [2]

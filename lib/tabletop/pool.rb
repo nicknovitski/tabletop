@@ -20,6 +20,7 @@ module Tabletop
       end
       super(dice)
     end
+    
     def +(operand)
       # if the operator is a pool, or an array only of Die objects...
       if operand.class == Pool or (operand.class == Array and !(operand.detect{|obj| obj.class != Die}))
@@ -35,6 +36,14 @@ module Tabletop
         sum <=> operand.to_int
     end
       
+    def *(operand)
+      sum * operand
+    end
+    
+    def coerce(other)
+      [other, sum]
+    end
+    
     def values
       map {|die| die.value}
     end
