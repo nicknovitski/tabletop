@@ -5,9 +5,19 @@ module Tabletop
 
     describe "#count" do
       it {subject.count.should == 1}
+      
       it "can be set on instantiation" do
         (1..5).each do |v|
           TokenStack.new(v).count.should == v
+        end
+      end
+      
+      it "is called when stacks are compared to numbers" do
+        (1..5).each do |v|
+          s = TokenStack.new(v)
+          s.should == v
+          s.should >= v-1
+          s.should <= v+1
         end
       end
     end

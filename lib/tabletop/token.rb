@@ -5,9 +5,14 @@ module Tabletop
   
   class TokenStack
     attr_accessor :count
+    include Comparable
     
     def initialize(n = 1)
       @count = n
+    end
+    
+    def <=>(operand)
+        count <=> operand.to_int
     end
     
     def add(n = 1)
