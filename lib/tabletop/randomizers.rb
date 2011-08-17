@@ -59,4 +59,28 @@ module Tabletop
       [1,0,-1].include?(val)
     end
   end
+  
+  class Coin < Die
+    def initialize(value=nil)
+      super(2, value)
+    end
+    
+    def roll
+      @value = rand(sides)
+    end
+    
+    def flip
+      roll
+      self
+    end
+    
+    def to_s
+      "(#{[' ', '+'][value]})"
+    end
+    
+    protected
+    def valid_value?(val)
+      [0,1].include?(val)
+    end
+  end
 end

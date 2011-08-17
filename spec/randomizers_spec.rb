@@ -20,15 +20,15 @@ module Tabletop
       end
       
       it "cannot be 1 or less" do
-        lambda { Die.new(0) }.should raise_error(ArgumentError)
-        lambda { Die.new(1) }.should raise_error(ArgumentError)
-        lambda { Die.new(-5) }.should raise_error(ArgumentError)
+        expect { Die.new(0) }.to raise_error(ArgumentError)
+        expect { Die.new(1) }.to raise_error(ArgumentError)
+        expect { Die.new(-5) }.to raise_error(ArgumentError)
       end
       
       it "cannot be a non-integer" do
-        lambda { Die.new(0.1) }.should raise_error(ArgumentError)
-        lambda { Die.new(5.7694) }.should raise_error(ArgumentError)
-        lambda { Die.new("foof") }.should raise_error(ArgumentError)
+        expect { Die.new(0.1) }.to raise_error(ArgumentError)
+        expect { Die.new(5.7694) }.to raise_error(ArgumentError)
+        expect { Die.new("foof") }.to raise_error(ArgumentError)
       end
     end
     
@@ -46,9 +46,9 @@ module Tabletop
       end
       
       it "cannot be a non-integer" do
-        lambda { Die.new(0.1) }.should raise_error(ArgumentError)
-        lambda { Die.new(5.7694) }.should raise_error(ArgumentError)
-        lambda { Die.new("foof") }.should raise_error(ArgumentError)
+        expect { Die.new(0.1) }.to raise_error(ArgumentError)
+        expect { Die.new(5.7694) }.to raise_error(ArgumentError)
+        expect { Die.new("foof") }.to raise_error(ArgumentError)
       end
     end
     
@@ -144,17 +144,17 @@ module Tabletop
         [-1, 0, 1].each do |v|
           FudgeDie.new(v)
         end
-        lambda {FudgeDie.new(2)}.should raise_error(ArgumentError)
-        lambda {FudgeDie.new(0.6)}.should raise_error(ArgumentError)
-        lambda {FudgeDie.new("5")}.should raise_error(ArgumentError)
+        expect {FudgeDie.new(2)}.to raise_error(ArgumentError)
+        expect {FudgeDie.new(0.6)}.to raise_error(ArgumentError)
+        expect {FudgeDie.new("5")}.to raise_error(ArgumentError)
       end
     end
     
     describe "#value=" do
       it "cannot be set to anything but -1, 0, or 1" do
-        lambda {@fudge.value = 2}.should raise_error(ArgumentError)
-        lambda {@fudge.value = 0.6}.should raise_error(ArgumentError)
-        lambda {@fudge.value = "5"}.should raise_error(ArgumentError)
+        expect {@fudge.value = 2}.to raise_error(ArgumentError)
+        expect {@fudge.value = 0.6}.to raise_error(ArgumentError)
+        expect {@fudge.value = "5"}.to raise_error(ArgumentError)
         [-1, 0, 1].each do |v|
           @fudge.value = v
         end
@@ -167,6 +167,38 @@ module Tabletop
         FudgeDie.new(0).to_s.should == "[ ]"
         FudgeDie.new(-1).to_s.should == "[-]"
       end
+    end
+  end
+  
+  describe Coin do
+    describe "#sides" do
+      it {subject.sides.should == 2}
+    end
+    
+    describe "#value" do
+      it "can be either 0 or 1" do
+        [0, 1].each do |v|
+          subject.value = v
+        end
+      end
+      
+      it "can't be anything else" do
+        expect {subject.value = "a thing"}.to raise_error(ArgumentError)
+        expect {subject.value = 2}.to raise_error(ArgumentError)
+      end
+    end
+    
+    describe "#flip" do
+      it {subject.flip.should be_instance_of(Coin)}
+      it "should alias roll" do
+        subject.should_receive(:roll)
+        subject.flip
+      end
+    end
+    
+    describe "#to_s" do
+      it {Coin.new(1).to_s.should == "(+)"}
+      it {Coin.new(0).to_s.should == "( )"}
     end
   end
 end

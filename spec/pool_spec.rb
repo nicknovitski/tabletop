@@ -22,19 +22,19 @@ module Tabletop
     
     describe "[]" do
       it "should access Die objects" do
-        @d6[0].class.should == Die
-        @fudge[0].class.should == FudgeDie
+        @d6[0].should be_instance_of(Die)
+        @fudge[0].should be_instance_of(FudgeDie)
       end
     end
     
     describe "+" do
       it "should join Pools into new Pools" do
-        (@mixed + @d17s).class == Pool
-        (@d6 + @fudge).class == Pool
+        (@mixed + @d17s).should be_instance_of(Pool)
+        (@d6 + @fudge).should be_instance_of(Pool)
       end
       
       it "should persist die types" do
-        (@d6 + @fudge)[1].class.should == FudgeDie
+        (@d6 + @fudge)[1].should be_instance_of(FudgeDie)
       end
       
       it "should join pools without rolling them" do
@@ -76,8 +76,18 @@ module Tabletop
       end
       
       it "should reject adding anything else" do
-        lambda {@d6 + "foof"}.should raise_error(ArgumentError)
-        lambda {@d6 + [Die.new, Object.new]}.should raise_error(ArgumentError)
+        expect {@d6 + "foof"}.to raise_error(ArgumentError)
+        expect {@d6 + [Die.new, Object.new]}.to raise_error(ArgumentError)
+      end
+    end
+    
+    describe "*" do
+      it "should multiply by the sum of the pool" do
+        (1..10).each do |v|
+          p = Pool.new([Die.new(10, v)])
+          (p * 5).should == (v * 5)
+          (5 * p).should == (5 * v)
+        end
       end
     end
     
@@ -92,7 +102,7 @@ module Tabletop
     describe "#roll" do
       it "should return the Pool itself" do
         @d6.roll.length.should == @d6.length
-        @d6.roll.class.should == @d6.class
+        @d6.roll.should be_instance_of(Pool)
       end
       
       it "should store the new values" do
@@ -150,7 +160,7 @@ module Tabletop
     
     describe "#highest" do
       it "should return a pool of the highest-value die" do
-        @d6.highest.class.should == Pool
+        @d6.highest.should be_instance_of(Pool)
         @d6.highest.values.should == [2]
         @d17s.highest.values.should == [17]
         @mixed.highest.values.should == [11]
@@ -166,7 +176,7 @@ module Tabletop
     describe "#lowest" do
       it "should return a pool of the lowest-value die." do
         @d6.lowest.values.should == [2]
-        @d17s.lowest.class.should == Pool
+        @d17s.lowest.should be_instance_of(Pool)
         @d17s.lowest.values.should == [1]
         @mixed.lowest.values.should == [1]
       end

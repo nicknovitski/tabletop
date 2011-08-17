@@ -40,7 +40,7 @@ module Tabletop
       @possibilities.each do |poss|
         if meets?(poss)
           poss.outcomes.each do |outcome|
-            if Roll === outcome
+            if outcome.instance_of?(Roll)
               results << outcome.roll.effects
             else
               results << outcome
@@ -98,7 +98,7 @@ module Tabletop
     end
     
     def equals(values, *outcomes)
-      if values.class == Range
+      if values.instance_of?(Range)
         values.each do |val|
           @possibilities << Possibility.new(outcomes, :== => val)
         end

@@ -16,8 +16,7 @@ Gem::Specification.new do |s|
     'README.markdown',
   ]
 
-  s.required_rubygems_version = Gem::Requirement.new('>= 1.3.7')
-  s.rubygems_version = '1.3.7'
+  s.required_rubygems_version = '>= 1.3.7'
   s.specification_version = 3
 
   ignores = File.readlines(".gitignore").grep(/\S+/).map {|s| s.chomp }
@@ -29,7 +28,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'bueller'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rdoc'
 end
