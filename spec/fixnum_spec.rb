@@ -10,7 +10,8 @@ module Tabletop
       end
       
       it "shows up in respond_to?(:dN)" do
-        1.respond_to?(:d50).should be_true
+        1.should respond_to(:d50)
+        10.should_not respond_to(:dthing)
       end
     end
     describe "#dF" do
