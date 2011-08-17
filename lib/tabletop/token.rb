@@ -11,12 +11,12 @@ module Tabletop
     end
     
     def add(n = 1)
-      raise ArgumentError unless Fixnum === n and n > 0
+      raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
       @count += n
     end
     
     def remove(n=1)
-      raise ArgumentError unless Fixnum === n and n > 0
+      raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
       if n > @count
         n_t, c_t = "token", "token"
         
@@ -32,7 +32,7 @@ module Tabletop
     end
     
     def move(n, opts)
-      raise(ArgumentError, "target is #{opts[:to].class}, not TokenStack") unless TokenStack === opts[:to]
+      raise(ArgumentError, "target is #{opts[:to].class}, not TokenStack") unless opts[:to].instance_of?(TokenStack)
       remove(n)
       opts[:to].add(n)
     end

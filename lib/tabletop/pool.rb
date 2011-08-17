@@ -5,7 +5,7 @@ module Tabletop
   class Pool < DelegateClass(Array)
     include Comparable
     def initialize(init_dice)
-      return super(init_dice) if init_dice.class == Array
+      return super(init_dice) if init_dice.instance_of?(Array)
       d_groups = init_dice.split
       dice = []
       d_groups.each do |d_notation|
@@ -23,7 +23,7 @@ module Tabletop
     
     def +(operand)
       # if the operator is a pool, or an array only of Die objects...
-      if operand.class == Pool or (operand.class == Array and !(operand.detect{|obj| obj.class != Die}))
+      if operand.instance_of?(Pool) or (operand.instance_of?(Array) and !(operand.detect{|obj| !(obj.instance_of?(Die))}))
         new_union(operand)
       elsif operand.kind_of? Numeric
         sum + operand
@@ -51,8 +51,8 @@ module Tabletop
       fudge = nil
       result = {}
       each do |die|
-        if die.class == FudgeDie
-          fudge = count {|d| d.class == FudgeDie}
+        if die.instance_of?(FudgeDie)
+          fudge = count {|d| d.instance_of?(FudgeDie)}
         else
           result[die.sides] = count {|d| d.sides == die.sides}
         end
@@ -110,7 +110,7 @@ module Tabletop
       union = [self, array].flatten
       new_pool =[]
       union.each do |die| 
-        if die.class == FudgeDie
+        if die.instance_of?(FudgeDie)
           new_pool << FudgeDie.new(die.value)
         else
           new_pool << Die.new(die.sides, die.value)

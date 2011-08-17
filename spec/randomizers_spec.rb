@@ -189,7 +189,7 @@ module Tabletop
     end
     
     describe "#flip" do
-      it {subject.flip.class.should == Coin}
+      it {subject.flip.should be_instance_of(Coin)}
       it "should alias roll" do
         subject.should_receive(:roll)
         subject.flip

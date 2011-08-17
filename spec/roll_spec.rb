@@ -7,7 +7,7 @@ module Tabletop
       it "accesses the roll's pool" do
         d20 = Roll.new(1.d20) do
         end
-        d20.pool.class.should == Pool
+        d20.pool.should be_instance_of(Pool)
         d20.pool.length.should == 1
         d20.pool[0].sides.should == 20
       end
@@ -111,7 +111,7 @@ module Tabletop
         
         [1,2,3].include?(c[0]).should be_true
         
-        b[1].class.should == String
+        b[1].should be_instance_of(String)
         
       end
       before :each do

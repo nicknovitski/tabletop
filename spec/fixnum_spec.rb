@@ -4,9 +4,9 @@ module Tabletop
   describe Fixnum do
     describe "#dX" do
       it "generates a pool of the appropriate size and type" do
-        1.d6.class.should == Pool
+        1.d6.should be_instance_of(Pool)
         4.d7.dice.should == ["4d7"]
-        10.d100.class.should == Pool
+        10.d100.should be_instance_of(Pool)
       end
       
       it "shows up in respond_to?(:dN)" do
@@ -16,8 +16,8 @@ module Tabletop
     describe "#dF" do
       it "generates a pool of fudge dice" do
         sotc = 4.dF
-        sotc.class.should == Pool
-        sotc.all? { |d| d.class == FudgeDie }.should be_true
+        sotc.should be_instance_of(Pool)
+        sotc.all? { |d| d.instance_of?(FudgeDie) }.should be_true
         sotc.dice.should == ["4dF"]
       end
     end
