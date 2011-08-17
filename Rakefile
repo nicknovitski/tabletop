@@ -58,5 +58,5 @@ end
 desc "Push changes to github and rubygems"
 task :publish do
   system "git push origin master --tags"
-  system "gem push pkg/#{gemspec.name}-#{gemspec.version}"
+  system "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
 end
