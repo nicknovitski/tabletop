@@ -191,8 +191,13 @@ module Tabletop
     describe "#flip" do
       it {subject.flip.should be_instance_of(Coin)}
       it "should alias roll" do
-        subject.should_receive(:roll)
+        mock(subject).roll
         subject.flip
+        # I have to use implicit expectations, because the below code doesn't
+        # work in rspec2
+        #stub(subject).roll
+        #subject.flip
+        #subject.should have_received.roll
       end
     end
     
