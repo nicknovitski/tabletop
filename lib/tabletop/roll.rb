@@ -10,6 +10,7 @@ module Tabletop
     def initialize(outcomes, conditions)
       @outcomes, @conditions = outcomes, conditions
     end
+    
   end
     
   class Roll
@@ -38,11 +39,10 @@ module Tabletop
     end
     
     
-    # Returns an array.
-    # + The first value in the array is #result
-    # + If a "difficulty" was set in the most call of #roll, and #result meets or exceeds it, then the second element will be "Success". 
-    # + if the conditions of any of the roll's @possibilities are met (see #meets?), then their outcomes will be all following elements.
-    # + if none of the above conditions are met, the second and final element is nil. 
+    # Returns either an array or nil.
+    # + If a "difficulty" was set in the most recent call of #roll, and #result meets or exceeds it, then the first element will be "Success". 
+    # + If the conditions of any of the roll's @possibilities are met (see #meets?), then their outcomes will be all following elements. 
+    # + If none of these conditions are met, returns nil
     def effects
       results = []
       
@@ -51,22 +51,15 @@ module Tabletop
       end
       
       @possibilities.each do |poss|
-        if meets?(poss)
-          poss.outcomes.each do |outcome|
-            if outcome.instance_of?(Roll)
-              results << outcome.roll.effects
-            else
-              results << outcome
-            end
-          end
-        end
-      end
-          
-      if results.empty?
-        results << nil 
+        results.concat(check(poss))
       end
       
-      results.unshift(result)
+      results.compact!
+
+      if results.empty?
+        results = nil
+      end
+      results
     end
     
     # Without any options passed, calls Pool#roll on the roll's pool.  Returns the Roll.
@@ -94,21 +87,36 @@ module Tabletop
       self 
     end
     
-    # Takes an object, returns false if anything set in the object's conditions hash 
-    # are not met by #sum, otherwise returns true 
+    # Takes a Possibility, returns an Array containing nil if any of it's conditions
+    # aren't met. Otherwise, returns an Array containing all the Possibility's
+    # outcomes.  If any of those outcomes are Roll objects, they are rolled and their
+    # #effects are returned as an outcome.
     #--
     # TODO: checks #result, not #sum
-    def meets?(p)
-      answer = true
-      if p.conditions[:>=]
-        if p.conditions[:>=] > sum
-          answer = false
+    def check(p) #:nodoc:
+      conditions_met = true
+      
+      if p.conditions[:>=] and sum < p.conditions[:>=]
+        conditions_met = false
+      end
+      
+      if p.conditions[:==] and p.conditions[:==] != sum
+        conditions_met = false
+      end
+      
+      if conditions_met
+        results = []
+        p.outcomes.each do |outcome|
+          if outcome.instance_of?(Roll)
+            results << outcome.roll.effects
+          else
+            results << outcome
+          end
         end
+        results
+      else
+        [nil]
       end
-      if p.conditions[:==]
-        answer = false if p.conditions[:==] != sum
-      end
-      answer
     end
     
     # The sum of the values of dice in the pool, and any modifier set in 
