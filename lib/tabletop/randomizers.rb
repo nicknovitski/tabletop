@@ -84,11 +84,11 @@ module Tabletop
       super(2, value)
     end
     
-    def roll :nodoc:
+    def roll #:nodoc:
       @value = rand(sides)
     end
     
-    # Roll, then return itself 
+    # set to a random value, then return itself 
     def flip
       roll
       self
