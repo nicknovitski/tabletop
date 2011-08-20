@@ -1,6 +1,17 @@
 module Tabletop
   
   class NotEnoughTokensError < ArgumentError
+    def initialize(wanted, available)
+      w_t, a_t = "token", "token"
+      
+      w_t << "s" if wanted > 1 or wanted == 0
+      
+      a_t << "s" if available > 1 or available == 0
+      
+      available = available > 0 ? available : "no"
+      
+      super("tried to remove #{wanted} #{w_t} from a stack with #{available} #{a_t}")
+    end
   end
   
   class TokenStack
@@ -26,15 +37,7 @@ module Tabletop
     def remove(n=1)
       raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
       if n > @count
-        n_t, c_t = "token", "token"
-        
-        n_t << "s" if n > 1 or n == 0
-        
-        c_t << "s" if @count > 1 or @count == 0
-        
-        c = @count > 0 ? @count : "no" 
-        errmsg = "tried to remove #{n} #{n_t} from a stack with #{c} #{c_t}"
-        raise NotEnoughTokensError, errmsg
+        raise NotEnoughTokensError.new(n, @count)
       end
       @count -= n
     end
