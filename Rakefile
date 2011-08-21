@@ -57,7 +57,7 @@ end
 
 desc "Update master and develop branches on github"
 task :github do
-  system "git push origin --tags"
+  system "git push origin : --tags"
 end
 
 desc "Push changes to github and rubygems"
