@@ -55,8 +55,12 @@ task :clean do
   FileUtils.rm_rf "pkg"
 end
 
+desc "Update master and develop branches on github"
+task :github do
+  system "git push origin --tags"
+end
+
 desc "Push changes to github and rubygems"
-task :publish do
-  system "git push origin master --tags"
+task :publish => :github do
   system "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
 end
