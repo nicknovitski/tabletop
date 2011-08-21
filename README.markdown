@@ -8,7 +8,11 @@ Tabletop aims to provide a simple way of describing, automating and tracking the
     
     require 'tabletop'
 
-## Dice
+## Usage
+
+For detailed information, I recommend the [full documentation](http://rubydoc.info/gems/tabletop/), but I want this file to give you a good primer, so let's get started.
+
+### Dice
 
 Dice are pretty straightforward.  They've got a number of sides, set on instantiation (defaulting to 6), and a current value between that number and 1 inclusive, which can be set on instantiation, or set directly. Finally, they can be rolled, which gives them a new random value.
 
@@ -66,7 +70,7 @@ When pools are compared to each other or to numbers with <=>, it's assumed you'r
 
 Rolls are very much under construction and their API is in flux, but they allow you to automate randomly determining results in a variety of ways.
 
-Rolls have a lot of options, described in detail in the rubygems documentation.  But let's take a simple example from one of my favorite games, Apocalypse World.
+Rolls have a lot of options, described in detail in the documentation.  But let's take a simple example from one of my favorite games, Apocalypse World.
 
 >When you open your brain to the world’s psychic maelstrom, roll+weird. On a hit, the MC will tell you something new and interesting about the current situation, and might ask you a question or two; answer them. On a 10+, the MC will give you good detail. On a 7–9, the MC will give you an impression.
 
@@ -123,7 +127,7 @@ So, possible results for our cool AW roll:
     
 ### Coming Soon
 
-Just these few functions already give enough functionality to do different kinds of rolls, but there's a lot more in store.
+That's already enough functionality to do many different kinds of rolls, but there's a lot more in store.
 
 One bonus thing I'll briefly note is that Rolls can be nested, and `effects` returns them as such. 
 
@@ -147,7 +151,7 @@ This can lead to some surprisingly sophisticated constructions.  Remember that "
 
 ## How to contribute
 
-*First and most importantly*, if you're reading this and you make games, please tell me about them!  Second, any complaints or suggestions are always welcome, _regardless of coding knowledge_.  Feel free to communicate your opinions by creating an issue on the github project, or just drop me a line at <nick.novitski@gmail.com>.
+*First and most importantly*, if you're reading this and you make games, please tell me about them!  Second, any complaints or suggestions are always welcome, _regardless of coding knowledge_.  Feel free to communicate your opinions by [creating an issue on github](https://github.com/njay/tabletop/issues), or just dropping me a line at <nick.novitski@gmail.com>.
 
 If you have clear ideas about what more the project should do, and you think you can do something about it, then make it so!  Don't even bother asking me about it, you know the drill:
 
