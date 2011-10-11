@@ -1,15 +1,14 @@
 require_relative 'randomizers'
-require 'delegate'
 
 module Tabletop
-  class Pool < DelegateClass(Array)
+  class Pool < Array
     include Comparable
     
     # requires one parameter, which can be either of 
     #  - an array of Die objects
     #  - a string of d-notation
     def initialize(init_dice)
-      return super(init_dice) if init_dice.instance_of?(Array)
+      return super(init_dice) if init_dice.kind_of?(Array)
       d_groups = init_dice.split
       dice = []
       d_groups.each do |d_notation|
