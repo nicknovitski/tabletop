@@ -14,23 +14,39 @@ module Tabletop
     end
   end
   
+  class ExceedMaxTokensError < ArgumentError
+  end
+  
   class TokenStack
     
-    # The number of tokens in the Stack
-    attr_accessor :count
+    # The number of tokens in the stack, and the maximum number it can have
+    attr_accessor :count, :max
     include Comparable
     
-    def initialize(num_tokens = 1)
+    def initialize(num_tokens = 1, hash={})
       @count = num_tokens
+      @max = hash[:max]
     end
     
     def <=>(operand)
         count <=> operand.to_int
     end
     
+    def count=(new_value)
+      raise_if_over_max(new_value)
+      @count = new_value
+    end
+    
     def add(n = 1)
       raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
+      raise_if_over_max(n + @count)
       @count += n
+    end
+    
+    def raise_if_over_max(value)
+      if @max
+        raise ExceedMaxTokensError if value > @max
+      end 
     end
     
     # Raises NotEnoughTokensError if there aren't enough tokens to remove 
@@ -58,6 +74,11 @@ module Tabletop
         opts[:to].remove(n)
         raise
       end
+    end
+    
+    def refresh
+      raise NoMethodError if @max.nil?
+      @count = @max
     end
   end
 end

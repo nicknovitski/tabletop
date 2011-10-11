@@ -123,5 +123,53 @@ module Tabletop
         @b.count.should == 1
       end
     end
+
+    context "with a maximum set" do
+      describe "#max" do
+        it "can be set on instantiation" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.max.should == v
+          end
+        end
+      end
+      describe "#count=" do
+        it "cannot be set higher than the current maximum" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.count = v
+            expect{s.count = v+1}.should raise_error ExceedMaxTokensError 
+          end
+        end
+      end
+      describe "#add" do
+        it "cannot go above the maximum" do
+          s = TokenStack.new(1, max: 1)
+          expect{s.add(1)}.should raise_error ExceedMaxTokensError
+          s.max = 5
+          s.add(1)
+          expect{s.add(5)}.should raise_error ExceedMaxTokensError
+        end
+      end
+      describe "#refresh" do
+        it "sets the count to the maximum" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.refresh
+            s.count.should == v
+          end
+        end
+      end
+    end
+    context "with no maximum set" do
+      describe "#max" do
+        it {subject.max.should be_nil}
+      end
+      describe "#refresh" do
+        it "pretends it doesn't exist" do
+          expect{subject.refresh}.should raise_error NoMethodError
+        end
+      end
+    end
   end
 end
