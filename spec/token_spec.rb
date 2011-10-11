@@ -110,9 +110,15 @@ module Tabletop
         end
       end
       it "doesn't move any tokens if :to isn't a TokenStack" do
-        expect {@a.move(1, :to => [])}.to raise_error(
-          ArgumentError,
-          /target is Array, not TokenStack/)
+        expect {@a.move(1, :to => [])}.to raise_error ArgumentError
+        @a.count.should == 1
+      end
+      it "doesn't move any tokens if no :to option is passed" do
+        expect {@a.move(1)}.to raise_error ArgumentError
+        @a.count.should == 1
+      end
+      it "doesn't move any tokens if there aren't enough tokens to move" do
+        expect {@a.move(2, :to => @b)}.to raise_error NotEnoughTokensError
         @a.count.should == 1
         @b.count.should == 1
       end

@@ -42,12 +42,22 @@ module Tabletop
       @count -= n
     end
     
-    # Removes N tokens from the receiver stack, then 
-    # adds them to the stack in opts[:to] 
+    # Usage: stack_a.move(N, :to => stack_b)
+    # Removes N tokens from stack_a, and adds 
+    # the same number to stack_b 
     def move(n, opts)
-      raise(ArgumentError, "target is #{opts[:to].class}, not TokenStack") unless opts[:to].instance_of?(TokenStack)
-      remove(n)
-      opts[:to].add(n)
+      begin
+        opts[:to].add(n)
+      rescue NoMethodError
+        raise ArgumentError
+      end
+      
+      begin
+        remove(n)
+      rescue NotEnoughTokensError
+        opts[:to].remove(n)
+        raise
+      end
     end
   end
 end
