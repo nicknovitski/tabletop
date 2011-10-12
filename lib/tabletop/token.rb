@@ -38,7 +38,9 @@ module Tabletop
     end
     
     def add(n = 1)
-      raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
+      raise ArgumentError unless n.respond_to?(:to_i)
+      raise ArgumentError if n < 0
+      n = n.to_i
       raise_if_over_max(n + @count)
       @count += n
     end
@@ -51,7 +53,9 @@ module Tabletop
     
     # Raises NotEnoughTokensError if there aren't enough tokens to remove 
     def remove(n=1)
-      raise ArgumentError unless n.instance_of?(Fixnum) and n > 0
+      raise ArgumentError unless n.respond_to?(:to_i)
+      n = n.to_i
+      raise ArgumentError if n < 0
       if n > @count
         raise NotEnoughTokensError.new(n, @count)
       end
