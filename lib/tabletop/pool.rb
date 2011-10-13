@@ -4,21 +4,28 @@ module Tabletop
   class Pool < Array
     include Comparable
     
-    # requires one parameter, which can be either of 
+    # Requires one parameter, which can be either of 
     #  - an array of Die objects
-    #  - a string of d-notation
+    #  - a string of elements separated by spaces which can be in two different formats:
+    #     + d-notation (ie, "d20", "3dF", etc) denoting dice that will be given random values
+    #     + a value, a slash, then a number of sides (ie, "2/6", "47/100", etc)
     def initialize(init_dice)
       return super(init_dice) if init_dice.kind_of?(Array)
       d_groups = init_dice.split
       dice = []
-      d_groups.each do |d_notation|
-        number, sides = d_notation.split('d')
-        number = number.to_i
-        number += 1 if number == 0
-        if sides.to_i > 0
-          number.times { dice << Die.new(sides.to_i)}
-        elsif sides == "F"
-          number.times {dice << FudgeDie.new}
+      d_groups.each do |d|
+        if d =~ /d/ # d_notation
+          number, sides = d.split('d')
+          number = number.to_i
+          number += 1 if number == 0
+          if sides.to_i > 0
+            number.times { dice << Die.new(sides.to_i)}
+          elsif sides == "F"
+            number.times {dice << FudgeDie.new}
+          end
+        else # die literal
+          value, sides = d.split('/')
+          dice << Die.new(sides.to_i, value.to_i)
         end
       end
       super(dice)

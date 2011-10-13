@@ -10,6 +10,21 @@ module Tabletop
       @fudge = Pool.new("3dF")
     end
     
+    describe ".new" do
+      it "can accept a string of d-notation"
+      it "can accept an array of dice objects"
+      it "can accept a string describing a specific dice configuration" do
+        pool = Pool.new("1/4 2/6 3/8")
+        pool.length.should == 3
+        pool[0].value.should == 1
+        pool[0].sides.should == 4
+        pool[1].value.should == 2
+        pool[1].sides.should == 6
+        pool[2].value.should == 3
+        pool[2].sides.should == 8
+      end
+    end
+    
     describe "#dice" do
       it "should return an array of dice notation" do
         @mixed.dice.should == ["2d10","d20"]
