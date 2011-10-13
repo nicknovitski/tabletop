@@ -99,7 +99,7 @@ module Tabletop
     describe "*" do
       it "should multiply by the sum of the pool" do
         (1..10).each do |v|
-          p = Pool.new([Die.new(10, v)])
+          p = Pool.new("#{v}/10")
           (p * 5).should == (v * 5)
           (5 * p).should == (5 * v)
         end
@@ -152,7 +152,7 @@ module Tabletop
     describe "<=>" do
       it "should compare the sums of different pools" do
         @d17s.should >= @d6
-        @d6.should < Pool.new([Die.new(4, 4)])
+        @d6.should < Pool.new("4/4")
       end
       
       it "should compare pools to numbers" do
