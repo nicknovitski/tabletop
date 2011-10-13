@@ -9,6 +9,10 @@ module Tabletop
         10.d100.should be_instance_of(Pool)
       end
       
+      it "raises an exception for invalid method names" do
+        expect {10.dthing}.to raise_error(NoMethodError)
+      end
+      
       it "shows up in respond_to?(:dN)" do
         1.should respond_to(:d50)
         10.should_not respond_to(:dthing)

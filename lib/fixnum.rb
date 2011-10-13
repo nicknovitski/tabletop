@@ -12,9 +12,9 @@ class Fixnum
     Tabletop::Pool.new("#{self}dF")
   end
   
-  # Matches any methods of the form d(.*), and calls #dX($1.to_i)
+  # Matches any methods of the form dN, where N > 0, and calls #dX(N)
   def method_missing(symbol, *args, &block)
-    if symbol =~ /^d(.*)$/
+    if symbol =~ /^d(.*)$/ and $1.to_i > 0
       dX($1.to_i)
     else
       super
