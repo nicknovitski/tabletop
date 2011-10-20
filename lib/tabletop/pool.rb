@@ -139,7 +139,7 @@ module Tabletop
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
       kept = reject{|die| to_drop.any?{|drop_value| die.value == drop_value }}
-      return Pool.new(kept)
+      Pool.new(kept)
     end
     
     private
