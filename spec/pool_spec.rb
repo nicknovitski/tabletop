@@ -11,8 +11,21 @@ module Tabletop
     end
     
     describe ".new" do
-      it "can accept a string of d-notation"
-      it "can accept an array of dice objects"
+      it "can accept a string of d-notation" do
+        p = Pool.new("2d10 d20")
+        p.length.should == 3
+        p[0].sides.should == 10
+        p[1].sides.should == 10
+        p[2].sides.should == 20
+      end
+      it "can accept an array of dice objects" do
+        # mostly used internally
+        p = Pool.new([Die.new(6, 1), Die.new(4)])
+        p.length.should == 2
+        p[0].sides.should == 6
+        p[0].value.should == 1
+        p[1].sides.should == 4
+      end
       it "can accept a string describing a specific dice configuration" do
         pool = Pool.new("1/4 2/6 3/8")
         pool.length.should == 3
@@ -50,6 +63,7 @@ module Tabletop
       
       it "should persist die types" do
         (@d6 + @fudge)[1].should be_instance_of(FudgeDie)
+        #TODO: check coins also
       end
       
       it "should join pools without rolling them" do
