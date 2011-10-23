@@ -3,23 +3,22 @@ module Tabletop
     include Comparable
     
     attr_reader :sides, :value
-    
+
     # Sides must be greater then or equal to 1.  
     # If init_value is nil, then #roll is called. 
-    def initialize(sides=6, init_value=nil)
-      if sides <= 1
+    def initialize(params={})
+      params[:sides] ||= 6
+      if params[:sides] <= 1
         raise ArgumentError, "Die cannot have #{sides} sides"
       end
-      unless sides.kind_of? Integer
+      unless params[:sides].kind_of? Integer
         raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
       end
-      @sides = sides
-      if init_value.nil?
-        init_value = roll
-      else
-        raise ArgumentError unless valid_value?(init_value)
-      end
-      @value = init_value
+      @sides = params[:sides]
+
+      params[:value] ||= roll
+      raise ArgumentError, "Value #{params[:value]} invalid for randomizer of #{@sides} sides" unless valid_value?(params[:value])
+      @value = params[:value]
     end
     
     # Sets @value to a random number n, where 1 <= n <= @sides
@@ -50,7 +49,7 @@ module Tabletop
     
     protected
     def valid_value?(val)
-      val > 0 and val <= @sides
+      val > 0 and val <= @sides and val.kind_of?(Integer)
     end
   end
   
@@ -58,8 +57,8 @@ module Tabletop
   # A FudgeDie is a kind of three-sided Die that has a value
   # of either 0, 1, or -1.
   class FudgeDie < Die
-    def initialize(init_value = nil)
-      super(3, init_value)
+    def initialize(val = 0)
+      super(sides: 3, value: val)
     end
     def roll
       @value = rand(sides)-1
@@ -80,8 +79,8 @@ module Tabletop
   # A coin is a kind of two-sided Die that has a value of
   # either 0 or 1
   class Coin < Die
-    def initialize(value=nil)
-      super(2, value)
+    def initialize(val=0)
+      super(sides: 2, value: val)
     end
     
     def roll #:nodoc:

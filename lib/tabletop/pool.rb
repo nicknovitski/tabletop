@@ -19,13 +19,13 @@ module Tabletop
           number = number.to_i
           number += 1 if number == 0
           if sides.to_i > 0
-            number.times { dice << Die.new(sides.to_i)}
+            number.times { dice << Die.new(sides: sides.to_i)}
           elsif sides == "F"
             number.times {dice << FudgeDie.new}
           end
         else # die literal
           value, sides = d.split('/')
-          dice << Die.new(sides.to_i, value.to_i)
+          dice << Die.new(sides: sides.to_i, value: value.to_i)
         end
       end
       super(dice)
@@ -150,7 +150,7 @@ module Tabletop
         if die.instance_of?(FudgeDie)
           new_pool << FudgeDie.new(die.value)
         else
-          new_pool << Die.new(die.sides, die.value)
+          new_pool << Die.new(sides: die.sides, value: die.value)
         end
       end
       Pool.new(new_pool)

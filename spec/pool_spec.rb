@@ -20,7 +20,7 @@ module Tabletop
       end
       it "can accept an array of dice objects" do
         # mostly used internally
-        p = Pool.new([Die.new(6, 1), Die.new(4)])
+        p = Pool.new([Die.new(value: 1), Die.new(sides: 4)])
         p.length.should == 2
         p[0].sides.should == 6
         p[0].value.should == 1
@@ -69,8 +69,6 @@ module Tabletop
       it "should join pools without rolling them" do
         merge = @d6 + @d17s
         merge.values.should == [2, 5, 16, 1, 17, 9]
-        merge.roll
-        merge.values.should == [4, 17, 5, 16, 12, 12]
       end
       
       it "creates genuinely new pools" do
@@ -91,13 +89,11 @@ module Tabletop
       end
       
       it "should understand adding a number as looking for a sum result" do
-        (@d17s + 5).should == 53
-        (@mixed + @d6 + 10).should == 34
-        (@fudge + 3).should == 2
+        (@d17s + 5).should == @d17s.sum + 5
       end
       
       it "should add literal dice arrays as if they were pools" do
-        g = @d6 + [Die.new(6,3), Die.new(10, 4)]
+        g = @d6 + [Die.new(value: 3), Die.new(sides: 10, value: 4)]
         g.values.should == [2, 3, 4]
         g.dice.should == ["2d6", "d10"]
         g.roll
@@ -134,13 +130,10 @@ module Tabletop
         @d6.roll.should be_instance_of(Pool)
       end
       
-      it "should store the new values" do
-        @d6.roll
-        @d6.values.should == [4]
-        @d17s.roll
-        @d17s.values.should == [17, 5, 16, 12, 12]
-        @mixed.roll
-        @mixed.values.should == [2, 9, 5]
+      it "calls roll on its contents" do
+        d = double("a die")
+        d.should_receive(:roll)
+        Pool.new([d]).roll
       end
       it "can roll only dice below a certain value"
       it "can roll only dice above a certain value"
@@ -177,13 +170,8 @@ module Tabletop
     end
     
     describe "#sets" do
-      it "should list the sets, in order by height and width" do
-        ore = Pool.new("10d10")
-        ore.sets.should == ["2x9", "2x5", "2x4", "2x2", "1x7", "1x1"]
-        ore.roll
-        ore.sets.should == ["3x10", "2x7", "1x6", "1x5", "1x4", "1x3", "1x2"]
-        ore.roll
-        ore.sets.should == ["3x9", "2x8", "2x7", "1x10", "1x3", "1x1"]
+      it "should group dice in sets, by order of height, then width" do
+        Pool.new("9/10 1/10 5/10 4/10 9/10 5/10 7/10 4/10").sets.should == ["2x9", "2x5", "2x4", "1x7", "1x1"]
       end
     end
     
@@ -248,11 +236,9 @@ module Tabletop
     describe "#drop" do
       it "should drop any dice of the specified value" do
         ore = Pool.new("10d10")
-        ore.values.should == [4, 1, 5, 7, 9, 2, 9, 5, 2, 4]
-        at_least_two = ore.drop(1)
-        at_least_two.values.should == [4, 5, 7, 9, 2, 9, 5, 2, 4]
-        at_least_three = ore.drop([1,2])
-        at_least_three.values.should == [4, 5, 7, 9, 9, 5, 4]
+        (10..1).each do |i|
+          ore.drop(i).should_not include(i)
+        end
       end
     end
     

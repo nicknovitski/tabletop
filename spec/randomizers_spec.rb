@@ -2,16 +2,15 @@ require 'spec_helper'
 
 module Tabletop
   describe Die do
-    
     before :each do
-      @d6_2 = Die.new(6, 2)
-      @d6_3 = Die.new(6, 3)
+      @d6_2 = Die.new(value: 2)
+      @d6_3 = Die.new(value: 3)
     end
     
     describe "#sides" do
       it "can be accessed" do
         (2..10).each do |i|
-          Die.new(i).sides.should == i
+          Die.new(sides: i).sides.should == i
         end
       end
       
@@ -20,15 +19,15 @@ module Tabletop
       end
       
       it "cannot be 1 or less" do
-        expect { Die.new(0) }.to raise_error(ArgumentError)
-        expect { Die.new(1) }.to raise_error(ArgumentError)
-        expect { Die.new(-5) }.to raise_error(ArgumentError)
+        expect { Die.new(sides: 0) }.to raise_error(ArgumentError)
+        expect { Die.new(sides: 1) }.to raise_error(ArgumentError)
+        expect { Die.new(sides: -5) }.to raise_error(ArgumentError)
       end
       
       it "cannot be a non-integer" do
-        expect { Die.new(0.1) }.to raise_error(ArgumentError)
-        expect { Die.new(5.7694) }.to raise_error(ArgumentError)
-        expect { Die.new("foof") }.to raise_error(ArgumentError)
+        expect { Die.new(sides: 0.1) }.to raise_error(ArgumentError)
+        expect { Die.new(sides: 5.7694) }.to raise_error(ArgumentError)
+        expect { Die.new(sides: "foof") }.to raise_error(ArgumentError)
       end
     end
     
@@ -36,19 +35,19 @@ module Tabletop
       it "should be random on instantiation by default" do 
         Random.srand(10)
         Die.new.value.should == 2
-        Die.new(10).value.should == 5
-        Die.new(50).value.should == 16
+        Die.new(sides: 10).value.should == 5
+        Die.new(sides: 50).value.should == 16
       end
       
       it "can be set to a given value on instantiation" do
-        Die.new(6, 5).value.should == 5
-        Die.new(10, 2).value.should == 2
+        Die.new(value: 5).value.should == 5
+        Die.new(sides: 10, value: 2).value.should == 2
       end
       
       it "cannot be a non-integer" do
-        expect { Die.new(0.1) }.to raise_error(ArgumentError)
-        expect { Die.new(5.7694) }.to raise_error(ArgumentError)
-        expect { Die.new("foof") }.to raise_error(ArgumentError)
+        expect { Die.new(value: 0.1) }.to raise_error(ArgumentError)
+        expect { Die.new(value: 5.7694) }.to raise_error(ArgumentError)
+        expect { Die.new(value: "foof") }.to raise_error(ArgumentError)
       end
     end
     
@@ -58,7 +57,7 @@ module Tabletop
         lambda { d.value = 0 }.should raise_error(ArgumentError)
         lambda { d.value = -5 }.should raise_error(ArgumentError)
         lambda { d.value = 7 }.should raise_error(ArgumentError)
-        d = Die.new(10)
+        d = Die.new(sides: 10)
         d.value = 7
         lambda { d.value = 22 }.should raise_error(ArgumentError)
       end
@@ -71,7 +70,7 @@ module Tabletop
       
       context "six sides" do
         before(:each) do
-          @d6 = Die.new #=> 2
+          @d6 = Die.new
         end
         
         it "should return a random result between 1 and @sides" do
@@ -91,7 +90,7 @@ module Tabletop
     describe "#to_str" do      
       it "should tell you the die's value" do
         5.times do
-          d = Die.new(rand(10)+3)
+          d = Die.new(sides: rand(10)+3)
           "#{d}".should == "[#{d.value}]/d#{d.sides}"
         end
       end
