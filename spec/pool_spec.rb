@@ -2,7 +2,8 @@ require 'spec_helper'
 
 module Tabletop
   describe Pool do
-    let(:d6_set) { Pool.new("1/6 2/6 3/6 4/6 5/6 6/6") }
+
+    let(:d6_set) { Pool.new("2/6 1/6 3/6 4/6 5/6 6/6") }
     
     describe ".new" do
       it "can accept a string of d-notation" do
@@ -169,7 +170,7 @@ module Tabletop
       
       it "should return as many items as are specified" do
         d6_set.highest(3).values.should == [4,5,6]
-        d6_set.highest(10).values.should == [1,2,3,4,5,6]
+        d6_set.highest(10).values.should == [2,1,3,4,5,6]
       end
     end
     
@@ -179,18 +180,18 @@ module Tabletop
       end
       
       it "should return as many items as are specified" do
-        d6_set.lowest(3).values.should == [1,2, 3]
-        d6_set.lowest(10).values.should == [1,2,3,4,5,6]
+        d6_set.lowest(3).values.should == [2,1,3]
+        d6_set.lowest(10).values.should == [2,1,3,4,5,6]
       end
     end
     
     describe "#drop_highest" do
       it "should return a new pool missing the highest result" do
-        d6_set.drop_highest.values.should == [1,2,3,4,5]
+        d6_set.drop_highest.values.should == [2,1,3,4,5]
       end
       
       it "should drop as many items as are specified and are possible" do
-        d6_set.drop_highest(3).values.should == [1,2,3]
+        d6_set.drop_highest(3).values.should == [2,1,3]
         d6_set.drop_highest(10).values.should == []
       end
     end

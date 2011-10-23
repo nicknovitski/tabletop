@@ -115,12 +115,24 @@ module Tabletop
     
     # Returns a Pool containing copies of the n highest dice
     def highest(n=1)
-      Pool.new(sort.reverse.first(n))
+      if n < length
+        drop_lowest(length-n)
+      else
+        self
+      end
     end
     
     # Returns a Pool containing copies of the n lowest dice
     def lowest(n=1)
-      Pool.new(sort.first(n))
+      sorted = sort.first(n)
+      in_order = []
+      each do |d|
+        if sorted.include?(d)
+          in_order << d
+          sorted -= [d]
+        end
+      end
+      Pool.new(in_order)
     end
     
     # Returns a copy of the Pool, minus the n highest-value dice
