@@ -92,7 +92,15 @@ module Tabletop
       roll
       self
     end
-    
+
+    def heads?
+      @value == 1
+    end
+
+    def tails?
+      @value == 0
+    end
+
     # Returns either "( )" or "(+)" depending on @value
     def to_s
       "(#{[' ', '+'][value]})"

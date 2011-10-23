@@ -186,6 +186,20 @@ module Tabletop
         expect {subject.value = 2}.to raise_error(ArgumentError)
       end
     end
+
+    describe "heads?" do
+      it "is true if #value is 1" do
+        Coin.new(1).heads?.should be_true
+        Coin.new(0).heads?.should be_false
+      end
+    end
+
+    describe "tails?" do
+      it "is true if #value is 0" do
+        Coin.new(0).tails?.should be_true
+        Coin.new(1).tails?.should be_false
+      end
+    end
     
     describe "#flip" do
       it {subject.flip.should be_instance_of(Coin)}
