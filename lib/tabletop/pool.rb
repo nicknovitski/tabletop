@@ -23,9 +23,8 @@ module Tabletop
           elsif sides == "F"
             number.times {dice << FudgeDie.new}
           end
-        else # die literal
-          value, sides = d.split('/')
-          dice << Die.new(sides: sides.to_i, value: value.to_i)
+        else
+          dice << Die.new_from_string(d)
         end
       end
       super(dice)

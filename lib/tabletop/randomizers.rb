@@ -20,6 +20,12 @@ module Tabletop
       raise ArgumentError, "Value #{params[:value]} invalid for randomizer of #{@sides} sides" unless valid_value?(params[:value])
       @value = params[:value]
     end
+
+    def self.new_from_string(string)
+      raise ArgumentError unless string.respond_to?(:split)
+      v, s = string.split('/')
+      Die.new(sides: s.to_i, value: v.to_i)
+    end
     
     # Sets @value to a random number n, where 1 <= n <= @sides
     def roll

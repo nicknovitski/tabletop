@@ -6,7 +6,17 @@ module Tabletop
       @d6_2 = Die.new(value: 2)
       @d6_3 = Die.new(value: 3)
     end
-    
+
+    describe ".new_from_string" do
+      it "expects a string in the format 'n/o', where n and o are integers" do
+        d = Die.new_from_string('4/5')
+        d.value.should == 4
+        d.sides.should == 5
+        expect {Die.new_from_string('10')}.to raise_error(ArgumentError)
+        expect {Die.new_from_string(4/5)}.to raise_error(ArgumentError)
+      end
+    end
+
     describe "#sides" do
       it "can be accessed" do
         (2..10).each do |i|
