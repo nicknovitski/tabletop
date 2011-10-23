@@ -160,6 +160,8 @@ module Tabletop
       union.each do |die| 
         if die.instance_of?(FudgeDie)
           new_pool << FudgeDie.new(die.value)
+        elsif die.instance_of?(Coin)
+          new_pool << Coin.new(die.value)
         else
           new_pool << Die.new(sides: die.sides, value: die.value)
         end

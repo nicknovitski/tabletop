@@ -70,7 +70,7 @@ module Tabletop
         end
         it "should persist die types" do
           (Pool.new("d6")+Pool.new("dF"))[1].should be_instance_of(FudgeDie)
-          #TODO: check coins also
+          (Pool.new("d6")+Pool.new([Coin.new]))[1].should respond_to(:flip)
         end
         it "should alter #dice accordingly" do
           (Pool.new("2d17 d6")+Pool.new("3d17")).dice.should == ["d6", "5d17"]
