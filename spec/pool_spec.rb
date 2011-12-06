@@ -48,25 +48,35 @@ module Tabletop
     end
     
     describe "+" do
+      before(:each) do
+        @a = 5.d6
+      end
       context "adding a number" do
         it "should return the pool's sum plus the number" do
-          p = 5.d6
-          (p + 5).should == p.sum + 5
+          (@a + 5).should == @a.sum + 5
+        end
+      end
+      context "adding a randomizer" do
+        it "adds to the pool" do
+          mixed = @a + Die.new
+          mixed.length.should == 6
+        end
+        it "preserves class" do
+          (@a + FudgeDie.new(value:-1))[-1].value.should == -1
+          (@a + Coin.new)[-1].should respond_to :flip
         end
       end
       context "adding another pool" do
+        before(:each) do
+          @b = 4.d4
+          @merge = @a+@b
+        end
         it "should make a union of the pools" do
-          a = 5.d6
-          b = 4.d4
-          merge = a+b
-          merge.values.should == a.values+b.values
+          @merge.values.should == @a.values + @b.values
         end
         it "should make new die objects" do
-          a = 5.d6
-          b = 4.d4
-          merge = a+b
-          merge.roll
-          merge.values.should_not == a.values + b.values
+          @merge.roll
+          @merge.values.should_not == @a.values + @b.values
         end
         it "should persist die types" do
           (Pool.new("d6")+Pool.new("dF"))[1].should be_instance_of(FudgeDie)
@@ -75,12 +85,6 @@ module Tabletop
         it "should alter #dice accordingly" do
           (Pool.new("2d17 d6")+Pool.new("3d17")).dice.should == ["d6", "5d17"]
         end
-      end
-      context "adding a literal dice array" do
-        it "should make a union as if the array were a Pool"
-        it "should make new die objects"
-        it "should persist die types"
-        it "should alter #dice accordingly"
       end
       context "adding anything else" do
         it "should raise an exception" do

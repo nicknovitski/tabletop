@@ -39,6 +39,9 @@ module Tabletop
       # if the parameter seems to be an array of dice (this includes pools)
       if operand.respond_to?(:all?) and operand.all?{|obj| obj.respond_to?(:roll)}
         new_union(operand)
+      # if the parameter seems to be a randomizer
+      elsif operand.respond_to?(:sides)
+        new_union([operand])
       elsif operand.respond_to?(:to_int)
         sum + operand
       else
@@ -166,14 +169,8 @@ module Tabletop
     def new_union(array)
       union = [self, array].flatten
       new_pool =[]
-      union.each do |die| 
-        if die.instance_of?(FudgeDie)
-          new_pool << FudgeDie.new(die.value)
-        elsif die.instance_of?(Coin)
-          new_pool << Coin.new(die.value)
-        else
-          new_pool << Die.new(sides: die.sides, value: die.value)
-        end
+      union.each do |die|
+        new_pool << die.class.new(sides:die.sides, value:die.value)
       end
       Pool.new(new_pool)
     end
