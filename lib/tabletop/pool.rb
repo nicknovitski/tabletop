@@ -30,18 +30,30 @@ module Tabletop
       super(dice)
     end
     
-    # Behavior depends on the class of what is passed to it.
-    # Numeric::  returns the sum of the operand and the values of all dice in the receiving pool
-    # Pool:: returns a new pool with copies of all the dice in both operands
-    # AnythingElse:: raises an ArgumentError
+    # If adding a pool or array of dice objects, returns the the union of these pools.
+    #
+    # If adding a number, returns the sum of that number and all die values in the pool.
+    #
+    # Otherwise, raises an ArgumentError.
     def +(operand)
-      # if the operator is a pool, or an array only of Die objects...
-      if operand.instance_of?(Pool) or (operand.instance_of?(Array) and !(operand.detect{|obj| !(obj.instance_of?(Die))}))
+      # if the parameter seems to be an array of dice (this includes pools)
+      if operand.respond_to?(:all?) and operand.all?{|obj| obj.respond_to?(:roll)}
         new_union(operand)
-      elsif operand.kind_of? Numeric
+      # if the parameter seems to be a randomizer
+      elsif operand.respond_to?(:sides)
+        new_union([operand])
+      elsif operand.respond_to?(:to_int)
         sum + operand
       else
-        raise ArgumentError, "Cannot add operand of class #{operand.class}"
+         raise ArgumentError, "Only numbers and other pools can be added to pools"
+      end
+    end
+
+    def -(operand)
+      if operand.respond_to?(:to_a)
+        super
+      else
+        sum - operand
       end
     end
     
@@ -157,14 +169,8 @@ module Tabletop
     def new_union(array)
       union = [self, array].flatten
       new_pool =[]
-      union.each do |die| 
-        if die.instance_of?(FudgeDie)
-          new_pool << FudgeDie.new(die.value)
-        elsif die.instance_of?(Coin)
-          new_pool << Coin.new(die.value)
-        else
-          new_pool << Die.new(sides: die.sides, value: die.value)
-        end
+      union.each do |die|
+        new_pool << die.class.new(sides:die.sides, value:die.value)
       end
       Pool.new(new_pool)
     end
