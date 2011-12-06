@@ -99,6 +99,14 @@ module Tabletop
         end
       end
     end
+
+    describe "-" do
+      context "subtracting a number" do
+        it "should return the pool's sum minus the number" do
+          (d6_set - 1).should == 20
+        end
+      end
+    end
     
     describe "#values" do
       it "should be an array of the values of the dice" do
