@@ -140,9 +140,9 @@ module Tabletop
     
     describe "#value" do
       it "can be set on instantiation" do
-        FudgeDie.new(1).value.should == 1
-        FudgeDie.new(0).value.should == 0
-        FudgeDie.new(-1).value.should == -1
+        FudgeDie.new(value:1).value.should == 1
+        FudgeDie.new(value:0).value.should == 0
+        FudgeDie.new(value:-1).value.should == -1
       end
       
       it "is randomly rolled if not set" do
@@ -151,11 +151,11 @@ module Tabletop
       
       it "can only be one of either -1, 0, or 1" do
         [-1, 0, 1].each do |v|
-          FudgeDie.new(v)
+          FudgeDie.new(value:v)
         end
-        expect {FudgeDie.new(2)}.to raise_error(ArgumentError)
-        expect {FudgeDie.new(0.6)}.to raise_error(ArgumentError)
-        expect {FudgeDie.new("5")}.to raise_error(ArgumentError)
+        expect {FudgeDie.new(value:2)}.to raise_error(ArgumentError)
+        expect {FudgeDie.new(value:0.6)}.to raise_error(ArgumentError)
+        expect {FudgeDie.new(value:"5")}.to raise_error(ArgumentError)
       end
     end
     
@@ -172,9 +172,9 @@ module Tabletop
     
     describe "#to_s" do
       it "should return cute little dice with symbols" do
-        FudgeDie.new(1).to_s.should == "[+]"
-        FudgeDie.new(0).to_s.should == "[ ]"
-        FudgeDie.new(-1).to_s.should == "[-]"
+        FudgeDie.new(value:1).to_s.should == "[+]"
+        FudgeDie.new(value:0).to_s.should == "[ ]"
+        FudgeDie.new(value:-1).to_s.should == "[-]"
       end
     end
   end
@@ -199,15 +199,15 @@ module Tabletop
 
     describe "heads?" do
       it "is true if #value is 1" do
-        Coin.new(1).heads?.should be_true
-        Coin.new(0).heads?.should be_false
+        Coin.new(value:1).heads?.should be_true
+        Coin.new(value:0).heads?.should be_false
       end
     end
 
     describe "tails?" do
       it "is true if #value is 0" do
-        Coin.new(0).tails?.should be_true
-        Coin.new(1).tails?.should be_false
+        Coin.new(value:0).tails?.should be_true
+        Coin.new(value:1).tails?.should be_false
       end
     end
     
@@ -220,8 +220,8 @@ module Tabletop
     end
     
     describe "#to_s" do
-      it {Coin.new(1).to_s.should == "(+)"}
-      it {Coin.new(0).to_s.should == "( )"}
+      it {Coin.new(value:1).to_s.should == "(+)"}
+      it {Coin.new(value:0).to_s.should == "( )"}
     end
   end
 end
