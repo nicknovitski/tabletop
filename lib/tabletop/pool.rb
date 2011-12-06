@@ -106,6 +106,12 @@ module Tabletop
       end
       self
     end
+
+    def roll_if(&block)
+      each do |die|
+        die.roll if block.call(die)
+      end
+    end
     
     # Returns the sum of all values of dice in the pool
     def sum

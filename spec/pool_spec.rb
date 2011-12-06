@@ -138,6 +138,29 @@ module Tabletop
       it "can roll only dice above a certain value"
       it "can roll only dice equal to a certain value"
     end
+
+    describe "#roll_if" do
+      before :each do
+        @d1 = double("a die")
+        @d2 = double("a die")
+      end
+      it "rolls dice when the block returns true" do
+        @d1.should_receive(:roll)
+        Pool.new([@d1]).roll_if {|die| true}
+      end
+      it "doesn't roll dice when the block returns false" do
+        @d1.should_not_receive(:roll)
+        Pool.new([@d1]).roll_if {|die| false}
+      end
+      it "rolls dice that satisfy the block condition" do
+        @d1.stub(:sides).and_return(3)
+        @d2.stub(:sides).and_return(4)
+
+        @d1.should_not_receive(:roll)
+        @d2.should_receive(:roll)
+        Pool.new([@d1, @d2]).roll_if {|die| die.sides > 3}
+      end
+    end
     
     describe "#sum" do
       it "should sum the dice values" do
