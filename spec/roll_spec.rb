@@ -32,11 +32,12 @@ module Tabletop
               under_fire.roll
             end
             if under_fire.pool.sum + cool + mod >= 10
-              effect = "You do it"
+              effect = ["You do it"]
             elsif under_fire.pool.sum + cool + mod >= 7
-              effect = "You flinch, hesitate, or stall"
+              effect = ["You flinch, hesitate, or stall"]
             end
-            under_fire.effects.should == [under_fire.pool.sum + cool + mod, effect]
+            under_fire.result.should == under_fire.pool.sum + cool + mod
+            under_fire.effects.should == effect
           end
         end
       end
@@ -67,15 +68,16 @@ module Tabletop
         it "can count successes" do
           @exalted.roll(:pool=>10)
           10.times do
-            @exalted.effects.should == [count_successes(@exalted.pool), nil]
+            @exalted.result.should == count_successes(@exalted.pool)
+            @exalted.effects.should ==nil
           end
         end
         
         it "can determine success" do
           (1..10).each do |i|
             @exalted.roll(:pool=>6, :difficulty=>i)
-            effect = (count_successes(@exalted.pool) >= i) ? "Success" : nil
-            @exalted.effects.should == [count_successes(@exalted.pool), effect]
+            effect = (count_successes(@exalted.pool) >= i) ? ["Success"] : nil
+            @exalted.effects.should == effect
           end
         end
       end
@@ -99,20 +101,19 @@ module Tabletop
           equals 1, "Rock Paper Scissors", rps
           equals 2, "JanKenPon", jkp 
         }
-        a, b, c = fist_game.roll.effects
+        a, b = fist_game.roll.effects
         
-        [1,2].include?(a).should be_true
+        [1,2].include?(fist_game.result).should be_true
         
-        if a == 1
-          b.should == "Rock Paper Scissors"
+        if fist_game.result == 1
+          a.should == "Rock Paper Scissors"
         else
-          b.should == "JanKenPon"
+          a.should == "JanKenPon"
         end
         
-        [1,2,3].include?(c[0]).should be_true
-        
-        b[1].should be_instance_of(String)
-        
+        b.should be_instance_of(Array)
+        b.length.should == 1
+        b[0].should be_instance_of(String)
       end
       before :each do
         ill_fortune = Roll.new(1.d10) do
@@ -149,10 +150,10 @@ module Tabletop
       it "can compose multiple nested results" do
         20.times do
           @childhood_event.roll
-          if @childhood_event.effects[0] >= 9
-            @childhood_event.effects.length.should == 4
-          else
+          if @childhood_event.result >= 9
             @childhood_event.effects.length.should == 3
+          else
+            @childhood_event.effects.length.should == 2
           end
         end
       end

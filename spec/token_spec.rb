@@ -42,14 +42,14 @@ module Tabletop
           end
         end
         
-        it "does not accept non-integers" do
-          expect { subject.add(0.1) }.to raise_error(ArgumentError)
+        it "casts arguments to integers" do
+          subject.add(3.5)
+          subject.count.should == 4
+          expect { subject.add(Object) }.to raise_error(ArgumentError)
         end
         
-        it "does not accept arguments < 1" do
-          expect { subject.add(0) }.to raise_error(ArgumentError)
+        it "does not accept arguments < 0" do
           expect { subject.add(-1) }.to raise_error(ArgumentError)
-          subject.add(1)
         end
       end
     end
@@ -69,14 +69,15 @@ module Tabletop
           end
         end
         
-        it "does not accept non-integers" do
-          expect { subject.remove(0.1) }.to raise_error(ArgumentError)
+        it "casts arguments to integers" do
+          subject.count = 2
+          subject.remove(Math::E)
+          subject.count.should == 0
+          expect { subject.remove(Object) }.to raise_error(ArgumentError)
         end
         
-        it "does not accept arguments < 1" do
-          expect { subject.remove(0) }.to raise_error(ArgumentError)
+        it "does not accept arguments < 0" do
           expect { subject.remove(-1) }.to raise_error(ArgumentError)
-          subject.remove(1)
         end
         
         it "raises an error when trying to remove too many" do
@@ -110,11 +111,69 @@ module Tabletop
         end
       end
       it "doesn't move any tokens if :to isn't a TokenStack" do
-        expect {@a.move(1, :to => [])}.to raise_error(
-          ArgumentError,
-          /target is Array, not TokenStack/)
+        expect {@a.move(1, :to => [])}.to raise_error ArgumentError
+        @a.count.should == 1
+      end
+      it "doesn't move any tokens if no :to option is passed" do
+        expect {@a.move(1)}.to raise_error ArgumentError
+        @a.count.should == 1
+      end
+      it "doesn't move any tokens if there aren't enough tokens to move" do
+        expect {@a.move(2, :to => @b)}.to raise_error NotEnoughTokensError
         @a.count.should == 1
         @b.count.should == 1
+      end
+    end
+
+    context "with a maximum set" do
+      describe "#max" do
+        it "can be set on instantiation" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.max.should == v
+          end
+        end
+      end
+      describe "#count=" do
+        it "cannot be set higher than the current maximum" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.count = v
+            expect{s.count = v+1}.should raise_error ExceedMaxTokensError 
+          end
+        end
+      end
+      describe "#add" do
+        it "cannot go above the maximum" do
+          s = TokenStack.new(1, max: 1)
+          expect{s.add(1)}.should raise_error ExceedMaxTokensError
+          s.max = 5
+          s.add(1)
+          expect{s.add(5)}.should raise_error ExceedMaxTokensError
+        end
+        it "knows to round down decimals" do
+          subject.max = 2
+          subject.add(1.8)
+        end
+      end
+      describe "#refresh" do
+        it "sets the count to the maximum" do
+          2.upto(5) do |v|
+            s = TokenStack.new(1, max: v)
+            s.refresh
+            s.count.should == v
+          end
+        end
+      end
+    end
+    context "with no maximum set" do
+      describe "#max" do
+        it {subject.max.should be_nil}
+      end
+      describe "#refresh" do
+        it "pretends it doesn't exist" do
+          expect{subject.refresh}.should raise_error NoMethodError
+        end
       end
     end
   end

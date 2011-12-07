@@ -3,23 +3,29 @@ module Tabletop
     include Comparable
     
     attr_reader :sides, :value
-    
-    # Sides must be greater then or equal to 1.  
-    # If init_value is nil, then #roll is called. 
-    def initialize(sides=6, init_value=nil)
-      if sides <= 1
-        raise ArgumentError, "Die cannot have #{sides} sides"
-      end
-      unless sides.kind_of? Integer
-        raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
-      end
-      @sides = sides
-      if init_value.nil?
-        init_value = roll
+
+    # :sides must be greater then or equal to 1.  By default it is 6.
+    # If :value is nil, then #roll is called.
+    def initialize(params={})
+
+      if params[:sides].nil?
+        @sides = 6
       else
-        raise ArgumentError unless valid_value?(init_value)
+        @sides = Integer(params[:sides])
+        raise ArgumentError if @sides < 2
       end
-      @value = init_value
+
+      if params[:value].nil?
+        roll
+      else
+        self.value = params[:value]
+      end
+    end
+
+    def self.new_from_string(string)
+      raise ArgumentError unless string.respond_to?(:split)
+      v, s = string.split('/')
+      Die.new(sides: s.to_i, value: v.to_i)
     end
     
     # Sets @value to a random number n, where 1 <= n <= @sides
@@ -34,8 +40,9 @@ module Tabletop
     
     # Raises ArgumentError if new_value isn't between 1 and @sides inclusive
     def value=(new_value)
-      raise ArgumentError unless valid_value?(new_value)  
-      @value = new_value
+      integer_value = Integer(new_value)
+      raise ArgumentError unless valid_value?(integer_value)
+      @value = integer_value
     end
     
     # Compares based on value of the die
@@ -50,7 +57,7 @@ module Tabletop
     
     protected
     def valid_value?(val)
-      val > 0 and val <= @sides
+      0 < val and @sides >= val
     end
   end
   
@@ -58,8 +65,8 @@ module Tabletop
   # A FudgeDie is a kind of three-sided Die that has a value
   # of either 0, 1, or -1.
   class FudgeDie < Die
-    def initialize(init_value = nil)
-      super(3, init_value)
+    def initialize(params = {})
+      super(sides: 3, value: params[:value])
     end
     def roll
       @value = rand(sides)-1
@@ -80,8 +87,8 @@ module Tabletop
   # A coin is a kind of two-sided Die that has a value of
   # either 0 or 1
   class Coin < Die
-    def initialize(value=nil)
-      super(2, value)
+    def initialize(params={})
+      super(sides: 2, value: params[:value])
     end
     
     def roll #:nodoc:
@@ -93,7 +100,15 @@ module Tabletop
       roll
       self
     end
-    
+
+    def heads?
+      @value == 1
+    end
+
+    def tails?
+      @value == 0
+    end
+
     # Returns either "( )" or "(+)" depending on @value
     def to_s
       "(#{[' ', '+'][value]})"

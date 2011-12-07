@@ -1,42 +1,59 @@
 require_relative 'randomizers'
-require 'delegate'
 
 module Tabletop
-  class Pool < DelegateClass(Array)
+  class Pool < Array
     include Comparable
     
-    # requires one parameter, which can be either of 
+    # Requires one parameter, which can be either of 
     #  - an array of Die objects
-    #  - a string of d-notation
+    #  - a string of elements separated by spaces which can be in two different formats:
+    #     + d-notation (ie, "d20", "3dF", etc) denoting dice that will be given random values
+    #     + a value, a slash, then a number of sides (ie, "2/6", "47/100", etc)
     def initialize(init_dice)
-      return super(init_dice) if init_dice.instance_of?(Array)
+      return super(init_dice) if init_dice.kind_of?(Array)
       d_groups = init_dice.split
       dice = []
-      d_groups.each do |d_notation|
-        number, sides = d_notation.split('d')
-        number = number.to_i
-        number += 1 if number == 0
-        if sides.to_i > 0
-          number.times { dice << Die.new(sides.to_i)}
-        elsif sides == "F"
-          number.times {dice << FudgeDie.new}
+      d_groups.each do |d|
+        if d =~ /d/ # d_notation
+          number, sides = d.split('d')
+          number = number.to_i
+          number += 1 if number == 0
+          if sides.to_i > 0
+            number.times { dice << Die.new(sides: sides.to_i)}
+          elsif sides == "F"
+            number.times {dice << FudgeDie.new}
+          end
+        else
+          dice << Die.new_from_string(d)
         end
       end
       super(dice)
     end
     
-    # Behavior depends on the class of what is passed to it.
-    # Numeric::  returns the sum of the operand and the values of all dice in the receiving pool
-    # Pool:: returns a new pool with copies of all the dice in both operands
-    # AnythingElse:: raises an ArgumentError
+    # If adding a pool or array of dice objects, returns the the union of these pools.
+    #
+    # If adding a number, returns the sum of that number and all die values in the pool.
+    #
+    # Otherwise, raises an ArgumentError.
     def +(operand)
-      # if the operator is a pool, or an array only of Die objects...
-      if operand.instance_of?(Pool) or (operand.instance_of?(Array) and !(operand.detect{|obj| !(obj.instance_of?(Die))}))
+      # if the parameter seems to be an array of dice (this includes pools)
+      if operand.respond_to?(:all?) and operand.all?{|obj| obj.respond_to?(:roll)}
         new_union(operand)
-      elsif operand.kind_of? Numeric
+      # if the parameter seems to be a randomizer
+      elsif operand.respond_to?(:sides)
+        new_union([operand])
+      elsif operand.respond_to?(:to_int)
         sum + operand
       else
-        raise ArgumentError, "Cannot add operand of class #{operand.class}"
+         raise ArgumentError, "Only numbers and other pools can be added to pools"
+      end
+    end
+
+    def -(operand)
+      if operand.respond_to?(:to_a)
+        super
+      else
+        sum - operand
       end
     end
     
@@ -89,6 +106,12 @@ module Tabletop
       end
       self
     end
+
+    def roll_if(&block)
+      each do |die|
+        die.roll if block.call(die)
+      end
+    end
     
     # Returns the sum of all values of dice in the pool
     def sum
@@ -109,12 +132,24 @@ module Tabletop
     
     # Returns a Pool containing copies of the n highest dice
     def highest(n=1)
-      Pool.new(sort.reverse.first(n))
+      if n < length
+        drop_lowest(length-n)
+      else
+        self
+      end
     end
     
     # Returns a Pool containing copies of the n lowest dice
     def lowest(n=1)
-      Pool.new(sort.first(n))
+      sorted = sort.first(n)
+      in_order = []
+      each do |d|
+        if sorted.include?(d)
+          in_order << d
+          sorted -= [d]
+        end
+      end
+      Pool.new(in_order)
     end
     
     # Returns a copy of the Pool, minus the n highest-value dice
@@ -133,19 +168,15 @@ module Tabletop
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
       kept = reject{|die| to_drop.any?{|drop_value| die.value == drop_value }}
-      return Pool.new(kept)
+      Pool.new(kept)
     end
     
     private
     def new_union(array)
       union = [self, array].flatten
       new_pool =[]
-      union.each do |die| 
-        if die.instance_of?(FudgeDie)
-          new_pool << FudgeDie.new(die.value)
-        else
-          new_pool << Die.new(die.sides, die.value)
-        end
+      union.each do |die|
+        new_pool << die.class.new(sides:die.sides, value:die.value)
       end
       Pool.new(new_pool)
     end
