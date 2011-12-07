@@ -100,9 +100,26 @@ module Tabletop
     end
     
     # Rolls every die in the pool, and returns the Pool.
-    def roll
+    def roll(params={})
       each do |die|
-        die.roll
+
+        meets_all_conditions = true
+
+        params.each do |condition, term|
+          attribute, comparison = condition.to_s.split("_")
+          die_att = die.send(attribute.to_sym)
+
+          case comparison
+          when "under"
+            meets_all_conditions = false unless die_att < term
+          when "over"
+            meets_all_conditions = false unless die_att > term
+          when "equals"
+            meets_all_conditions = false unless die_att == term
+          end
+        end
+
+        die.roll if meets_all_conditions
       end
       self
     end
