@@ -34,9 +34,10 @@ module Tabletop
         expect { Die.new(sides: -5) }.to raise_error(ArgumentError)
       end
       
-      it "cannot be a non-integer" do
+      it "is cast as an integer" do
         expect { Die.new(sides: 0.1) }.to raise_error(ArgumentError)
-        expect { Die.new(sides: 5.7694) }.to raise_error(ArgumentError)
+        Die.new(sides: 5.7694).sides.should == 5
+        Die.new(sides: "10").sides.should == 10
         expect { Die.new(sides: "foof") }.to raise_error(ArgumentError)
       end
     end
@@ -46,7 +47,7 @@ module Tabletop
         Random.srand(10)
         Die.new.value.should == 2
         Die.new(sides: 10).value.should == 5
-        Die.new(sides: 50).value.should == 16
+        Die.new(sides: 50, value: nil).value.should == 16
       end
       
       it "can be set to a given value on instantiation" do
@@ -54,22 +55,26 @@ module Tabletop
         Die.new(sides: 10, value: 2).value.should == 2
       end
       
-      it "cannot be a non-integer" do
-        expect { Die.new(value: 0.1) }.to raise_error(ArgumentError)
-        expect { Die.new(value: 5.7694) }.to raise_error(ArgumentError)
-        expect { Die.new(value: "foof") }.to raise_error(ArgumentError)
+      it "is cast as an integer" do
+        expect { Die.new(value: []) }.to raise_error(TypeError)
+        Die.new(value: 5.7694).value.should == 5
+        expect { Die.new(value: "foof")}.to raise_error(ArgumentError)
       end
     end
     
     describe "#value=" do
-      it "can only be set to an integer i, where 0 < i <= sides" do
-        d = Die.new
-        lambda { d.value = 0 }.should raise_error(ArgumentError)
-        lambda { d.value = -5 }.should raise_error(ArgumentError)
-        lambda { d.value = 7 }.should raise_error(ArgumentError)
-        d = Die.new(sides: 10)
-        d.value = 7
-        lambda { d.value = 22 }.should raise_error(ArgumentError)
+      it "can only be set to i, where 0 < i <= sides" do
+        [4, 6, 10].each do |type|
+          d = Die.new(sides: type)
+          -10.upto(15).each do |v|
+            if v < 1 or v > type
+              lambda { d.value = v }.should raise_error(ArgumentError)
+            else
+              d.value = v
+              d.value.should == v
+            end
+          end
+        end
       end
     end
     
@@ -78,7 +83,7 @@ module Tabletop
         Random.srand(10)
       end
       
-      context "six sides" do
+      context "a die with six sides" do
         before(:each) do
           @d6 = Die.new
         end
@@ -140,33 +145,30 @@ module Tabletop
     
     describe "#value" do
       it "can be set on instantiation" do
-        FudgeDie.new(value:1).value.should == 1
-        FudgeDie.new(value:0).value.should == 0
-        FudgeDie.new(value:-1).value.should == -1
+        [-1, 0, 1].each do |v|
+          FudgeDie.new(value:v).value.should == v
+        end
       end
       
       it "is randomly rolled if not set" do
         @fudge.value.should == 0
       end
-      
-      it "can only be one of either -1, 0, or 1" do
-        [-1, 0, 1].each do |v|
-          FudgeDie.new(value:v)
-        end
+
+      it "can only be -1, 0 or 1" do
         expect {FudgeDie.new(value:2)}.to raise_error(ArgumentError)
-        expect {FudgeDie.new(value:0.6)}.to raise_error(ArgumentError)
-        expect {FudgeDie.new(value:"5")}.to raise_error(ArgumentError)
+        expect {FudgeDie.new(value:"-5")}.to raise_error(ArgumentError)
       end
     end
     
     describe "#value=" do
-      it "cannot be set to anything but -1, 0, or 1" do
-        expect {@fudge.value = 2}.to raise_error(ArgumentError)
-        expect {@fudge.value = 0.6}.to raise_error(ArgumentError)
-        expect {@fudge.value = "5"}.to raise_error(ArgumentError)
+      it "can be set to -1, 0, or 1" do
         [-1, 0, 1].each do |v|
           @fudge.value = v
         end
+      end
+      it "cannot be set to anything else" do
+        expect {@fudge.value = 2}.to raise_error(ArgumentError)
+        expect {@fudge.value = "-5"}.to raise_error(ArgumentError)
       end
     end
     
@@ -192,8 +194,8 @@ module Tabletop
       end
       
       it "can't be anything else" do
-        expect {subject.value = "a thing"}.to raise_error(ArgumentError)
-        expect {subject.value = 2}.to raise_error(ArgumentError)
+        expect {subject.value = "2"}.to raise_error(ArgumentError)
+        expect {subject.value = -1.6}.to raise_error(ArgumentError)
       end
     end
 

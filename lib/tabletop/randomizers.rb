@@ -7,18 +7,19 @@ module Tabletop
     # :sides must be greater then or equal to 1.  By default it is 6.
     # If :value is nil, then #roll is called.
     def initialize(params={})
-      params[:sides] ||= 6
-      if params[:sides] <= 1
-        raise ArgumentError, "Die cannot have #{sides} sides"
-      end
-      unless params[:sides].kind_of? Integer
-        raise ArgumentError, "Parameter must be Integer, not #{sides.class}"
-      end
-      @sides = params[:sides]
 
-      params[:value] ||= roll
-      raise ArgumentError, "#{params[:value]} is not a valid value" unless valid_value?(params[:value])
-      @value = params[:value]
+      if params[:sides].nil?
+        @sides = 6
+      else
+        @sides = Integer(params[:sides])
+        raise ArgumentError if @sides < 2
+      end
+
+      if params[:value].nil?
+        roll
+      else
+        self.value = params[:value]
+      end
     end
 
     def self.new_from_string(string)
@@ -39,8 +40,9 @@ module Tabletop
     
     # Raises ArgumentError if new_value isn't between 1 and @sides inclusive
     def value=(new_value)
-      raise ArgumentError unless valid_value?(new_value)  
-      @value = new_value
+      integer_value = Integer(new_value)
+      raise ArgumentError unless valid_value?(integer_value)
+      @value = integer_value
     end
     
     # Compares based on value of the die
@@ -55,7 +57,7 @@ module Tabletop
     
     protected
     def valid_value?(val)
-      val > 0 and val <= @sides and val.kind_of?(Integer)
+      0 < val and @sides >= val
     end
   end
   
