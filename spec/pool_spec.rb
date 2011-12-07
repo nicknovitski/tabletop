@@ -48,35 +48,32 @@ module Tabletop
     end
     
     describe "+" do
-      before(:each) do
-        @a = 5.d6
-      end
       context "adding a number" do
         it "should return the pool's sum plus the number" do
-          (@a + 5).should == @a.sum + 5
+          (d6_set + 5).should == d6_set.sum + 5
         end
       end
       context "adding a randomizer" do
         it "adds to the pool" do
-          mixed = @a + Die.new
-          mixed.length.should == 6
+          (d6_set + Die.new).length.should == 7
         end
         it "preserves class" do
-          (@a + FudgeDie.new(value:-1))[-1].value.should == -1
-          (@a + Coin.new)[-1].should respond_to :flip
+          (d6_set + FudgeDie.new(value:-1))[-1].value.should == -1
+          (d6_set + Coin.new)[-1].should respond_to :flip
         end
       end
       context "adding another pool" do
-        before(:each) do
-          @b = 4.d4
-          @merge = @a+@b
-        end
+        let(:d4_set) { 4.d4 }
+        let(:merge) { d6_set+d4_set }
         it "should make a union of the pools" do
-          @merge.values.should == @a.values + @b.values
+          merge.values.should == d6_set.values + d4_set.values
         end
         it "should make new die objects" do
-          @merge.roll
-          @merge.values.should_not == @a.values + @b.values
+          a = 1.d6
+          b = 1.d4
+          merge = a+b
+          merge.roll
+          merge.values.should_not == a.values + b.values
         end
         it "should persist die types" do
           (Pool.new("d6")+Pool.new("dF"))[1].should be_instance_of(FudgeDie)
