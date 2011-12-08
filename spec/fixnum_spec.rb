@@ -5,7 +5,7 @@ module Tabletop
     describe "#dX" do
       it "generates a pool of the appropriate size and type" do
         1.d6.should be_instance_of(Pool)
-        4.d7.dice.should == ["4d7"]
+        4.d7.d_notation.should == ["4d7"]
         10.d100.should be_instance_of(Pool)
       end
       
@@ -23,7 +23,7 @@ module Tabletop
         sotc = 4.dF
         sotc.should be_instance_of(Pool)
         sotc.all? { |d| d.instance_of?(FudgeDie) }.should be_true
-        sotc.dice.should == ["4dF"]
+        sotc.d_notation.should == ["4dF"]
       end
     end
   end

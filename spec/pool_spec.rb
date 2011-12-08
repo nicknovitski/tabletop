@@ -33,9 +33,9 @@ module Tabletop
       end
     end
     
-    describe "#dice" do
+    describe "#d_notation" do
       it "should return an array of dice notation" do
-        Pool.new("d20 2dF 2d10").dice.should == ["2d10","d20", "2dF"]
+        Pool.new("d20 2dF 2d10").d_notation.should == ["2d10","d20", "2dF"]
       end
     end
     
@@ -80,7 +80,7 @@ module Tabletop
           (Pool.new("d6")+Pool.new([Coin.new]))[1].should respond_to(:flip)
         end
         it "should alter #dice accordingly" do
-          (Pool.new("2d17 d6")+Pool.new("3d17")).dice.should == ["d6", "5d17"]
+          (Pool.new("2d17 d6")+Pool.new("3d17")).d_notation.should == ["d6", "5d17"]
         end
       end
       context "adding anything else" do

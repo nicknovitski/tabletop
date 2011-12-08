@@ -77,7 +77,7 @@ module Tabletop
     end
     
     # Returns a string of the pool's dice in d-notation 
-    def dice
+    def d_notation
       fudge = nil
       result = {}
       each do |die|
