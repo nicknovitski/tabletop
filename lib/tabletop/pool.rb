@@ -184,13 +184,13 @@ module Tabletop
     # of values) passed. 
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
-      kept = reject{|die| to_drop.any?{|drop_value| die.value == drop_value }}
+      kept = reject{|die| to_drop.include?{die.value}}
       Pool.new(kept)
     end
     
     private
     def new_union(array)
-      union = [self, array].flatten
+      union = [self, array].flatten # avoid using + in implementation of +
       new_pool =[]
       union.each do |die|
         new_pool << die.class.new(sides:die.sides, value:die.value)
