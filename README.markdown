@@ -124,7 +124,22 @@ So, possible results for our cool AW roll:
     open_brain.roll 
     puts open_brain.result  #=> 10 
     puts open_brain.effects #=> ["the MC will tell you something new and interesting about the current situation", "...and it's a good detail"]
-    
+
+### Decks
+
+Decks are essentially weighted hashes with a random #draw method.  You can put whatever hashable object you like in a
+deck (there's no Card class yet) as a key to a value that indicates the number of copies of that object in the deck.
+
+#draw returns another deck, and reduces the number of cards in the original deck appropriately.
+
+      d = Deck.new
+      d["card A"] = 20
+      d["card B"] = 19
+      d.deck_size      #=> 39
+      hand = d.draw(3) #=> {"card A"=>1, "card B" =>2}
+      d                #=> {"card A" => 19, "card B"=>17}
+      d << hand        #=> {"card A" => 20, "card B"=>19}
+
 ### Coming Soon
 
 That's already enough functionality to do many different kinds of rolls, but there's a lot more in store.
