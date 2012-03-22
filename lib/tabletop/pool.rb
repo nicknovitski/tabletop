@@ -77,7 +77,7 @@ module Tabletop
     end
     
     # Returns a string of the pool's dice in d-notation 
-    def dice
+    def d_notation
       fudge = nil
       result = {}
       each do |die|
@@ -100,9 +100,26 @@ module Tabletop
     end
     
     # Rolls every die in the pool, and returns the Pool.
-    def roll
+    def roll(params={})
       each do |die|
-        die.roll
+
+        meets_all_conditions = true
+
+        params.each do |condition, term|
+          attribute, comparison = condition.to_s.split("_")
+          die_att = die.send(attribute.to_sym)
+
+          case comparison
+          when "under"
+            meets_all_conditions = false unless die_att < term
+          when "over"
+            meets_all_conditions = false unless die_att > term
+          when "equals"
+            meets_all_conditions = false unless die_att == term
+          end
+        end
+
+        die.roll if meets_all_conditions
       end
       self
     end
@@ -167,13 +184,13 @@ module Tabletop
     # of values) passed. 
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
-      kept = reject{|die| to_drop.any?{|drop_value| die.value == drop_value }}
+      kept = reject{|die| to_drop.include?{die.value}}
       Pool.new(kept)
     end
     
     private
     def new_union(array)
-      union = [self, array].flatten
+      union = [self, array].flatten # avoid using + in implementation of +
       new_pool =[]
       union.each do |die|
         new_pool << die.class.new(sides:die.sides, value:die.value)

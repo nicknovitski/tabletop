@@ -33,9 +33,9 @@ module Tabletop
       end
     end
     
-    describe "#dice" do
+    describe "#d_notation" do
       it "should return an array of dice notation" do
-        Pool.new("d20 2dF 2d10").dice.should == ["2d10","d20", "2dF"]
+        Pool.new("d20 2dF 2d10").d_notation.should == ["2d10","d20", "2dF"]
       end
     end
     
@@ -48,42 +48,39 @@ module Tabletop
     end
     
     describe "+" do
-      before(:each) do
-        @a = 5.d6
-      end
       context "adding a number" do
         it "should return the pool's sum plus the number" do
-          (@a + 5).should == @a.sum + 5
+          (d6_set + 5).should == d6_set.sum + 5
         end
       end
       context "adding a randomizer" do
         it "adds to the pool" do
-          mixed = @a + Die.new
-          mixed.length.should == 6
+          (d6_set + Die.new).length.should == 7
         end
         it "preserves class" do
-          (@a + FudgeDie.new(value:-1))[-1].value.should == -1
-          (@a + Coin.new)[-1].should respond_to :flip
+          (d6_set + FudgeDie.new(value:-1))[-1].value.should == -1
+          (d6_set + Coin.new)[-1].should respond_to :flip
         end
       end
       context "adding another pool" do
-        before(:each) do
-          @b = 4.d4
-          @merge = @a+@b
-        end
+        let(:d4_set) { 4.d4 }
+        let(:merge) { d6_set+d4_set }
         it "should make a union of the pools" do
-          @merge.values.should == @a.values + @b.values
+          merge.values.should == d6_set.values + d4_set.values
         end
         it "should make new die objects" do
-          @merge.roll
-          @merge.values.should_not == @a.values + @b.values
+          a = 1.d6
+          b = 1.d4
+          merge = a+b
+          merge.roll
+          merge.values.should_not == a.values + b.values
         end
         it "should persist die types" do
           (Pool.new("d6")+Pool.new("dF"))[1].should be_instance_of(FudgeDie)
           (Pool.new("d6")+Pool.new([Coin.new]))[1].should respond_to(:flip)
         end
         it "should alter #dice accordingly" do
-          (Pool.new("2d17 d6")+Pool.new("3d17")).dice.should == ["d6", "5d17"]
+          (Pool.new("2d17 d6")+Pool.new("3d17")).d_notation.should == ["d6", "5d17"]
         end
       end
       context "adding anything else" do
@@ -121,6 +118,13 @@ module Tabletop
     end
     
     describe "#roll" do
+      before :each do
+        @d1, @d2, @d3= double("a die"), double("a die"), double("a die")
+        @d1.stub(:value).and_return(1)
+        @d2.stub(:value).and_return(2)
+        @d3.stub(:value).and_return(3)
+        @p = Pool.new([@d1, @d2, @d3])
+        end
       it "should return the Pool itself" do
         actual = d6_set.roll
         d6_set.length.times do |i|
@@ -128,15 +132,34 @@ module Tabletop
           actual[i].sides.should == d6_set[i].sides
         end
       end
-      
+
       it "calls roll on its contents" do
-        d = double("a die")
-        d.should_receive(:roll)
-        Pool.new([d]).roll
+        @d1.should_receive(:roll)
+        @d2.should_receive(:roll)
+        @d3.should_receive(:roll)
+        @p.roll
       end
-      it "can roll only dice below a certain value"
-      it "can roll only dice above a certain value"
-      it "can roll only dice equal to a certain value"
+      it "can roll only dice less than a certain value" do
+        @d1.should_receive(:roll)
+        @d2.should_not_receive(:roll)
+        @d3.should_not_receive(:roll)
+
+        @p.roll(:value_under=>2)
+      end
+      it "can roll only dice above a certain value" do
+        @d1.should_not_receive(:roll)
+        @d2.should_not_receive(:roll)
+        @d3.should_receive(:roll)
+
+        @p.roll(:value_over=>2)
+      end
+      it "can roll only dice equal to a certain value" do
+        @d1.should_not_receive(:roll)
+        @d2.should_receive(:roll)
+        @d3.should_not_receive(:roll)
+
+        @p.roll(:value_equals=>2)
+      end
     end
 
     describe "#roll_if" do
