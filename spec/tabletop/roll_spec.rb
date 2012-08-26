@@ -7,7 +7,6 @@ module Tabletop
       it "accesses the roll's pool" do
         d20 = Roll.new(1.d20) do
         end
-        d20.pool.should be_instance_of(Pool)
         d20.pool.length.should == 1
         d20.pool[0].sides.should == 20
       end

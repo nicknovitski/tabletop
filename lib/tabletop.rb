@@ -1,6 +1,6 @@
 require_relative 'fixnum'
 require_relative 'tabletop/randomizers'
-require_relative 'tabletop/pool'
+require_relative 'tabletop/dice_pool'
 require_relative 'tabletop/roll'
 require_relative 'tabletop/token'
 require_relative 'tabletop/condition'

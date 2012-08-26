@@ -4,9 +4,8 @@ module Tabletop
   describe Fixnum do
     describe "#dX" do
       it "generates a pool of the appropriate size and type" do
-        1.d6.should be_instance_of(Pool)
+        1.d6.should be_instance_of(DicePool)
         4.d7.d_notation.should == ["4d7"]
-        10.d100.should be_instance_of(Pool)
       end
       
       it "raises an exception for invalid method names" do
@@ -21,7 +20,7 @@ module Tabletop
     describe "#dF" do
       it "generates a pool of fudge dice" do
         sotc = 4.dF
-        sotc.should be_instance_of(Pool)
+        sotc.should be_instance_of(DicePool)
         sotc.all? { |d| d.instance_of?(FudgeDie) }.should be_true
         sotc.d_notation.should == ["4dF"]
       end

@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 module Tabletop
-  describe Pool do
+  describe DicePool do
 
-    let(:d6_set) { Pool.new("2/6 1/6 3/6 4/6 5/6 6/6") }
+    let(:d6_set) { DicePool.new("2/6 1/6 3/6 4/6 5/6 6/6") }
     
     describe ".new" do
       it "can accept a string of d-notation" do
-        p = Pool.new("2d10 d20")
+        p = DicePool.new("2d10 d20")
         p.length.should == 3
         p[0].sides.should == 10
         p[1].sides.should == 10
@@ -15,14 +15,14 @@ module Tabletop
       end
       it "can accept an array of dice objects" do
         # mostly used internally
-        p = Pool.new([Die.new(value: 1), Die.new(sides: 4)])
+        p = DicePool.new([Die.new(value: 1), Die.new(sides: 4)])
         p.length.should == 2
         p[0].sides.should == 6
         p[0].value.should == 1
         p[1].sides.should == 4
       end
       it "can accept a string describing a specific dice configuration" do
-        pool = Pool.new("1/4 2/6 3/8")
+        pool = DicePool.new("1/4 2/6 3/8")
         pool.length.should == 3
         pool[0].value.should == 1
         pool[0].sides.should == 4
@@ -35,13 +35,13 @@ module Tabletop
     
     describe "#d_notation" do
       it "should return an array of dice notation" do
-        Pool.new("d20 2dF 2d10").d_notation.should == ["2d10","d20", "2dF"]
+        DicePool.new("d20 2dF 2d10").d_notation.should == ["2d10","d20", "2dF"]
       end
     end
     
     describe "[]" do
       it "should access the objects " do
-        d = Pool.new("1/4")[0]
+        d = DicePool.new("1/4")[0]
         d.value.should == 1
         d.sides.should == 4
       end
@@ -69,24 +69,24 @@ module Tabletop
           merge.values.should == d6_set.values + d4_set.values
         end
         it "should make new die objects" do
-          a = 1.d6
-          b = 1.d4
-          merge = a+b
+          die1, die2 = Die.new, Die.new
+          merge = DicePool.new([die1])+DicePool.new([die2])
+          die1.should_not_receive :roll
+          die2.should_not_receive :roll
           merge.roll
-          merge.values.should_not == a.values + b.values
         end
         it "should persist die types" do
-          (Pool.new("d6")+Pool.new("dF"))[1].should be_instance_of(FudgeDie)
-          (Pool.new("d6")+Pool.new([Coin.new]))[1].should respond_to(:flip)
+          (DicePool.new("d6")+DicePool.new("dF"))[1].should be_instance_of(FudgeDie)
+          (DicePool.new("d6")+DicePool.new([Coin.new]))[1].should respond_to(:flip)
         end
         it "should alter #dice accordingly" do
-          (Pool.new("2d17 d6")+Pool.new("3d17")).d_notation.should == ["d6", "5d17"]
+          (DicePool.new("2d17 d6")+DicePool.new("3d17")).d_notation.should == ["d6", "5d17"]
         end
       end
       context "adding anything else" do
         it "should raise an exception" do
-          expect {Pool.new("d6") + "foof"}.to raise_error(ArgumentError)
-          expect {Pool.new("d6") + [Die.new, Object.new]}.to raise_error(ArgumentError)
+          expect {DicePool.new("d6") + "foof"}.to raise_error(ArgumentError)
+          expect {DicePool.new("d6") + [Die.new, Object.new]}.to raise_error(ArgumentError)
         end
       end
     end
@@ -94,7 +94,7 @@ module Tabletop
     describe "*" do
       it "should multiply by the sum of the pool" do
         (1..10).each do |v|
-          p = Pool.new("#{v}/10")
+          p = DicePool.new("#{v}/10")
           (p * 5).should == (v * 5)
           (5 * p).should == (5 * v)
         end
@@ -123,7 +123,7 @@ module Tabletop
         @d1.stub(:value).and_return(1)
         @d2.stub(:value).and_return(2)
         @d3.stub(:value).and_return(3)
-        @p = Pool.new([@d1, @d2, @d3])
+        @p = DicePool.new([@d1, @d2, @d3])
         end
       it "should return the Pool itself" do
         actual = d6_set.roll
@@ -169,11 +169,11 @@ module Tabletop
       end
       it "rolls dice when the block returns true" do
         @d1.should_receive(:roll)
-        Pool.new([@d1]).roll_if {|die| true}
+        DicePool.new([@d1]).roll_if {|die| true}
       end
       it "doesn't roll dice when the block returns false" do
         @d1.should_not_receive(:roll)
-        Pool.new([@d1]).roll_if {|die| false}
+        DicePool.new([@d1]).roll_if {|die| false}
       end
       it "rolls dice that satisfy the block condition" do
         @d1.stub(:sides).and_return(3)
@@ -181,7 +181,7 @@ module Tabletop
 
         @d1.should_not_receive(:roll)
         @d2.should_receive(:roll)
-        Pool.new([@d1, @d2]).roll_if {|die| die.sides > 3}
+        DicePool.new([@d1, @d2]).roll_if {|die| die.sides > 3}
       end
     end
     
@@ -203,21 +203,21 @@ module Tabletop
     
     describe "<=>" do
       it "should compare the sums of different pools" do
-        Pool.new("1/4 1/4").should == Pool.new("2/6")
-        Pool.new("10/10").should == Pool.new("10/50")
-        Pool.new("3/6").should < Pool.new("4/4")
+        DicePool.new("1/4 1/4").should == DicePool.new("2/6")
+        DicePool.new("10/10").should == DicePool.new("10/50")
+        DicePool.new("3/6").should < DicePool.new("4/4")
       end
       
       it "should compare pools to numbers" do
-        Pool.new("4/8 5/10").should < 10
-        Pool.new("1/6 1/8").should == 2
-        Pool.new("49/50").should <= 49
+        DicePool.new("4/8 5/10").should < 10
+        DicePool.new("1/6 1/8").should == 2
+        DicePool.new("49/50").should <= 49
       end
     end
     
     describe "#sets" do
       it "should group dice in sets, by order of height, then width" do
-        Pool.new("9/10 1/10 5/10 4/10 9/10 5/10 7/10 4/10").sets.should == ["2x9", "2x5", "2x4", "1x7", "1x1"]
+        DicePool.new("9/10 1/10 5/10 4/10 9/10 5/10 7/10 4/10").sets.should == ["2x9", "2x5", "2x4", "1x7", "1x1"]
       end
     end
     
@@ -267,7 +267,7 @@ module Tabletop
 
     describe "#drop" do
       it "should drop any dice of the specified value" do
-        ore = Pool.new("10d10")
+        ore = DicePool.new("10d10")
         (10..1).each do |i|
           ore.drop(i).should_not include(i)
         end

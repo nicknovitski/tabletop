@@ -4,12 +4,12 @@ class Fixnum
   
   # Returns a pool of dice of the given sides and size self
   def dX(sides)
-    Tabletop::Pool.new("#{self}d#{sides}")
+    Tabletop::DicePool.new("#{self}d#{sides}")
   end
   
   # Returns a pool of fudge dice of size self
   def dF
-    Tabletop::Pool.new("#{self}dF")
+    Tabletop::DicePool.new("#{self}dF")
   end
   
   # Matches any methods of the form dN, where N > 0, and calls #dX(N)

@@ -139,17 +139,17 @@ module Tabletop
           2.upto(5) do |v|
             s = TokenStack.new(1, max: v)
             s.count = v
-            expect{s.count = v+1}.should raise_error ExceedMaxTokensError 
+            expect{s.count = v+1}.to raise_error ExceedMaxTokensError 
           end
         end
       end
       describe "#add" do
         it "cannot go above the maximum" do
           s = TokenStack.new(1, max: 1)
-          expect{s.add(1)}.should raise_error ExceedMaxTokensError
+          expect{s.add(1)}.to raise_error ExceedMaxTokensError
           s.max = 5
           s.add(1)
-          expect{s.add(5)}.should raise_error ExceedMaxTokensError
+          expect{s.add(5)}.to raise_error ExceedMaxTokensError
         end
         it "knows to round down decimals" do
           subject.max = 2

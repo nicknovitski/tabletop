@@ -1,4 +1,4 @@
-require_relative 'pool'
+require_relative 'dice_pool'
 
 module Tabletop
   
@@ -24,7 +24,7 @@ module Tabletop
     # new Pool object will be instantiated every time this is done. 
     def initialize(pool=nil, &block)
       if pool
-        raise ArgumentError if pool.class != Tabletop::Pool
+        raise ArgumentError if !pool.respond_to?(:roll)
       end
       @pool = pool
       @possibilities = []

@@ -1,7 +1,7 @@
 require_relative 'randomizers'
 
 module Tabletop
-  class Pool < Array
+  class DicePool < Array
     include Comparable
     
     # Requires one parameter, which can be either of 
@@ -166,17 +166,17 @@ module Tabletop
           sorted -= [d]
         end
       end
-      Pool.new(in_order)
+      self.class.new(in_order)
     end
     
     # Returns a copy of the Pool, minus the n highest-value dice
     def drop_highest(n=1)
-      Pool.new(self-highest(n))
+      self.class.new(self-highest(n))
     end
     
     # Returns a copy of the Pool, minus the n lowest-value dice.
     def drop_lowest(n=1)
-      Pool.new(self-lowest(n))
+      self.class.new(self-lowest(n))
     end
     
     # Returns a copy of the current pool, minus any 
@@ -185,7 +185,7 @@ module Tabletop
     def drop(to_drop)
       to_drop = [to_drop].flatten #turn it into an array if it isn't one.
       kept = reject{|die| to_drop.include?{die.value}}
-      Pool.new(kept)
+      self.class.new(kept)
     end
     
     private
@@ -195,7 +195,7 @@ module Tabletop
       union.each do |die|
         new_pool << die.class.new(sides:die.sides, value:die.value)
       end
-      Pool.new(new_pool)
+      DicePool.new(new_pool)
     end
   end
 end
