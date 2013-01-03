@@ -1,33 +1,40 @@
 require_relative 'randomizers'
 
 module Tabletop
-  class DicePool < Array
+  class DicePool
     include Comparable
-    
+    attr_accessor :dice
+    extend Forwardable   
+    def_delegators :@dice, :length, :[]
+
     # Requires one parameter, which can be either of 
     #  - an array of Die objects
     #  - a string of elements separated by spaces which can be in two different formats:
     #     + d-notation (ie, "d20", "3dF", etc) denoting dice that will be given random values
     #     + a value, a slash, then a number of sides (ie, "2/6", "47/100", etc)
     def initialize(init_dice)
-      return super(init_dice) if init_dice.kind_of?(Array)
-      d_groups = init_dice.split
-      dice = []
-      d_groups.each do |d|
-        if d =~ /d/ # d_notation
-          number, sides = d.split('d')
-          number = number.to_i
-          number += 1 if number == 0
-          if sides.to_i > 0
-            number.times { dice << Die.new(sides: sides.to_i)}
-          elsif sides == "F"
-            number.times {dice << FudgeDie.new}
+      if init_dice.kind_of?(DicePool)
+        return init_dice
+      elsif init_dice.kind_of?(Array)
+        @dice = init_dice
+      else
+        d_groups = init_dice.split
+        @dice = []
+        d_groups.each do |d|
+          if d =~ /d/ # d_notation
+            number, sides = d.split('d')
+            number = number.to_i
+            number += 1 if number == 0
+            if sides.to_i > 0
+              number.times { @dice << Die.new(sides: sides.to_i)}
+            elsif sides == "F"
+              number.times { @dice << FudgeDie.new}
+            end
+          else
+            @dice << Die.new_from_string(d)
           end
-        else
-          dice << Die.new_from_string(d)
         end
       end
-      super(dice)
     end
     
     # If adding a pool or array of dice objects, returns the the union of these pools.
@@ -37,10 +44,10 @@ module Tabletop
     # Otherwise, raises an ArgumentError.
     def +(operand)
       # if the parameter seems to be an array of dice (this includes pools)
-      if operand.respond_to?(:all?) and operand.all?{|obj| obj.respond_to?(:roll)}
-        new_union(operand)
+      if operand.respond_to?(:dice) 
+        new_union(operand.dice)
       # if the parameter seems to be a randomizer
-      elsif operand.respond_to?(:sides)
+      elsif operand.respond_to?(:roll)
         new_union([operand])
       elsif operand.respond_to?(:to_int)
         sum + operand
@@ -50,9 +57,9 @@ module Tabletop
     end
 
     def -(operand)
-      if operand.respond_to?(:to_a)
-        super
-      else
+      begin 
+        @dice - operand.dice
+      rescue
         sum - operand
       end
     end
@@ -70,21 +77,21 @@ module Tabletop
     def coerce(other) #:nodoc:
       [other, sum]
     end
-    
+
     # Returns an array of the value of each die in the pool 
     def values
-      map {|die| die.value}
+      @dice.map {|die| die.value}
     end
     
     # Returns a string of the pool's dice in d-notation 
     def d_notation
       fudge = nil
       result = {}
-      each do |die|
+      @dice.each do |die|
         if die.instance_of?(FudgeDie)
-          fudge = count {|d| d.instance_of?(FudgeDie)}
+          fudge = @dice.count {|d| d.instance_of?(FudgeDie)}
         else
-          result[die.sides] = count {|d| d.sides == die.sides}
+          result[die.sides] = @dice.count {|d| d.sides == die.sides}
         end
       end
       d_array = result.sort.collect do |d_group| 
@@ -101,7 +108,7 @@ module Tabletop
     
     # Rolls every die in the pool, and returns the Pool.
     def roll(params={})
-      each do |die|
+      @dice.each do |die|
 
         meets_all_conditions = true
 
@@ -125,14 +132,14 @@ module Tabletop
     end
 
     def roll_if(&block)
-      each do |die|
+      @dice.each do |die|
         die.roll if block.call(die)
       end
     end
     
     # Returns the sum of all values of dice in the pool
     def sum
-      inject(0) {|sum, d| sum + d.value}
+      @dice.inject(0) {|sum, d| sum + d.value}
     end
     def to_int
       sum
@@ -141,16 +148,16 @@ module Tabletop
     # Returns a string describing all sets of die values in the pool in ORE notation.
     def sets
       result = {}
-      each do |die|
-        result[die.value] = count {|d| d.value == die.value}
+      @dice.each do |die|
+        result[die.value] = @dice.count {|d| d.value == die.value}
       end
       result.sort_by{|height, width| [width, height] }.collect {|i| i[1].to_s+"x"+i[0].to_s}.reverse
     end
     
     # Returns a Pool containing copies of the n highest dice
     def highest(n=1)
-      if n < length
-        drop_lowest(length-n)
+      if n < @dice.length
+        drop_lowest(@dice.length-n)
       else
         self
       end
@@ -158,9 +165,9 @@ module Tabletop
     
     # Returns a Pool containing copies of the n lowest dice
     def lowest(n=1)
-      sorted = sort.first(n)
+      sorted = @dice.sort.first(n)
       in_order = []
-      each do |d|
+      @dice.each do |d|
         if sorted.include?(d)
           in_order << d
           sorted -= [d]
@@ -190,7 +197,7 @@ module Tabletop
     
     private
     def new_union(array)
-      union = [self, array].flatten # avoid using + in implementation of +
+      union = [@dice, array].flatten # avoid using + in implementation of +
       new_pool =[]
       union.each do |die|
         new_pool << die.class.new(sides:die.sides, value:die.value)
