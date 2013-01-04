@@ -7,7 +7,7 @@ module Tabletop
       it "accesses the roll's pool" do
         d20 = Roll.new(1.d20) do
         end
-        d20.pool.length.should == 1
+        d20.pool.size.should == 1
         d20.pool[0].sides.should == 20
       end
     end
@@ -55,12 +55,12 @@ module Tabletop
         
         it "can be instantiated without a complete pool" do
           @exalted.roll(:pool=>6)
-          @exalted.pool.length.should == 6
-          @exalted.pool.each do |die|
+          @exalted.pool.size.should == 6
+          @exalted.pool.dice.each do |die|
             die.sides.should == 10
           end
           @exalted.roll(:pool=>10)
-          @exalted.pool.length.should == 10
+          @exalted.pool.size.should == 10
           expect {@exalted.roll}.to raise_error(ArgumentError)
         end
         
