@@ -5,7 +5,7 @@ module Tabletop
     include Comparable
     attr_accessor :dice
     extend Forwardable   
-    delegate [:size, :[]] => :@dice
+    delegate [:size, :[], :count, :all?] => :@dice
 
     # Requires one parameter, which can be either of 
     #  - an array of Die objects
