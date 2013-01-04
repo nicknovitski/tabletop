@@ -8,7 +8,7 @@ module Tabletop
     describe ".new" do
       it "can accept a string of d-notation" do
         p = DicePool.new("2d10 d20")
-        p.length.should == 3
+        p.size.should == 3
         p[0].sides.should == 10
         p[1].sides.should == 10
         p[2].sides.should == 20
@@ -16,14 +16,14 @@ module Tabletop
       it "can accept an array of dice objects" do
         # mostly used internally
         p = DicePool.new([Die.new(value: 1), Die.new(sides: 4)])
-        p.length.should == 2
+        p.size.should == 2
         p[0].sides.should == 6
         p[0].value.should == 1
         p[1].sides.should == 4
       end
       it "can accept a string describing a specific dice configuration" do
         pool = DicePool.new("1/4 2/6 3/8")
-        pool.length.should == 3
+        pool.size.should == 3
         pool[0].value.should == 1
         pool[0].sides.should == 4
         pool[1].value.should == 2
@@ -55,7 +55,7 @@ module Tabletop
       end
       context "adding a randomizer" do
         it "adds to the pool" do
-          (d6_set + Die.new).length.should == 7
+          (d6_set + Die.new).size.should == 7
         end
         it "preserves class" do
           (d6_set + FudgeDie.new(value:-1))[-1].value.should == -1
@@ -127,7 +127,7 @@ module Tabletop
         end
       it "should return the Pool itself" do
         actual = d6_set.roll
-        d6_set.length.times do |i|
+        d6_set.size.times do |i|
           actual[i].value.should == d6_set[i].value
           actual[i].sides.should == d6_set[i].sides
         end
