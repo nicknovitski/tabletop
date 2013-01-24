@@ -4,8 +4,8 @@ module Tabletop
     
     attr_reader :sides, :value
 
-    # :sides must be greater then or equal to 1.  By default it is 6.
-    # If :value is nil, then #roll is called.
+    # :sides must be greater than or equal to 2.  By default it is 6.
+    # :value must be between 1 and :sides, inclusive.  By default it is random.
     def initialize(params={})
 
       if params[:sides].nil?
@@ -15,10 +15,12 @@ module Tabletop
         raise ArgumentError if @sides < 2
       end
 
+      @possible_values = (1..sides).to_a
+
       if params[:value].nil?
         roll
       else
-        self.value = params[:value]
+        set_to params[:value]
       end
     end
 
@@ -28,36 +30,44 @@ module Tabletop
       Die.new(sides: s.to_i, value: v.to_i)
     end
     
-    # Sets @value to a random number n, where 1 <= n <= @sides
+    # Sets the die to a random number n, where 1 <= n <= @sides
     def roll
-      @value = rand(sides)+1
+      set_to random_value
     end
     
-    # Returns a string in the form "[@value]/d@sides"
+    # Returns a string in the form "[#value]/d#sides"
     def to_s
       "[#{value}]/d#{sides}"
     end
     
     # Raises ArgumentError if new_value isn't between 1 and @sides inclusive
-    def value=(new_value)
+    def set_to(new_value)
       integer_value = Integer(new_value)
       raise ArgumentError unless valid_value?(integer_value)
       @value = integer_value
+      self
     end
     
     # Compares based on value of the die
     def <=>(operand)
-      @value <=> operand.to_int
+      value <=> operand.to_int
     end
     
     # Returns the die's value
     def to_int
-      @value
+      value
     end
     
     protected
+
+    attr_reader :possible_values
+
     def valid_value?(val)
-      0 < val and @sides >= val
+      possible_values.include?(val)
+    end
+
+    def random_value
+      possible_values.sample 
     end
   end
   
@@ -68,18 +78,15 @@ module Tabletop
     def initialize(params = {})
       super(sides: 3, value: params[:value])
     end
-    def roll
-      @value = rand(sides)-1
-    end
     
     # Returns either "[-]", "[ ]", or "[+]", depending on @value
     def to_s
-      "[#{['-', ' ', '+'][@value+1]}]"
+      "[#{['-', ' ', '+'][value+1]}]"
     end
   
     protected
-    def valid_value?(val)
-      [1,0,-1].include?(val)
+    def possible_values
+      [-1, 0, 1]
     end
   end
   
@@ -90,23 +97,23 @@ module Tabletop
     def initialize(params={})
       super(sides: 2, value: params[:value])
     end
-    
-    def roll #:nodoc:
-      @value = rand(sides)
-    end
-    
-    # set to a random value, then return itself 
-    def flip
-      roll
-      self
+
+    alias_method :flip, :roll
+
+    def set_to_heads
+      set_to 1
     end
 
     def heads?
-      @value == 1
+      value == 1
+    end
+
+    def set_to_tails
+      set_to 0
     end
 
     def tails?
-      @value == 0
+      value == 0
     end
 
     # Returns either "( )" or "(+)" depending on @value
@@ -115,8 +122,8 @@ module Tabletop
     end
     
     protected
-    def valid_value?(val)
-      [0,1].include?(val)
+    def possible_values
+      [0,1]
     end
   end
 end

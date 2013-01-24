@@ -45,9 +45,9 @@ module Tabletop
     describe "#value" do
       it "should be random on instantiation by default" do 
         Random.srand(10)
-        Die.new.value.should == 2
-        Die.new(sides: 10).value.should == 5
-        Die.new(sides: 50, value: nil).value.should == 16
+        Die.new.value.should == 5
+        Die.new(sides: 10).value.should == 1
+        Die.new(sides: 50, value: nil).value.should == 32
       end
       
       it "can be set to a given value on instantiation" do
@@ -62,15 +62,15 @@ module Tabletop
       end
     end
     
-    describe "#value=" do
+    describe "#set_to" do
       it "can only be set to i, where 0 < i <= sides" do
         [4, 6, 10].each do |type|
           d = Die.new(sides: type)
           -10.upto(15).each do |v|
             if v < 1 or v > type
-              lambda { d.value = v }.should raise_error(ArgumentError)
+              lambda { d.set_to v }.should raise_error(ArgumentError)
             else
-              d.value = v
+              d.set_to v
               d.value.should == v
             end
           end
@@ -89,9 +89,9 @@ module Tabletop
         end
         
         it "should return a random result between 1 and @sides" do
-          @d6.roll.should == 6
-          @d6.roll.should == 5
           @d6.roll.should == 1
+          @d6.roll.should == 4
+          @d6.roll.should == 5
         end
         
         it "should alter the value appropriately" do
@@ -99,7 +99,7 @@ module Tabletop
             @d6.roll.should == @d6.value
           end
         end
-      end      
+      end
     end
     
     describe "#to_str" do      
@@ -151,7 +151,7 @@ module Tabletop
       end
       
       it "is randomly rolled if not set" do
-        @fudge.value.should == 0
+        @fudge.value.should == 1
       end
 
       it "can only be -1, 0 or 1" do
@@ -160,15 +160,16 @@ module Tabletop
       end
     end
     
-    describe "#value=" do
-      it "can be set to -1, 0, or 1" do
+    describe "#set_to" do
+      it "can be passed -1, 0, or 1" do
         [-1, 0, 1].each do |v|
-          @fudge.value = v
+          @fudge.set_to v
+          @fudge.value.should eq v
         end
       end
       it "cannot be set to anything else" do
-        expect {@fudge.value = 2}.to raise_error(ArgumentError)
-        expect {@fudge.value = "-5"}.to raise_error(ArgumentError)
+        expect {@fudge.set_to 2}.to raise_error(ArgumentError)
+        expect {@fudge.set_to "-5"}.to raise_error(ArgumentError)
       end
     end
     
@@ -186,16 +187,16 @@ module Tabletop
       it {subject.sides.should == 2}
     end
     
-    describe "#value" do
+    describe "#set_to" do
       it "can be either 0 or 1" do
         [0, 1].each do |v|
-          subject.value = v
+          subject.set_to v
         end
       end
       
       it "can't be anything else" do
-        expect {subject.value = "2"}.to raise_error(ArgumentError)
-        expect {subject.value = -1.6}.to raise_error(ArgumentError)
+        expect {subject.set_to "2"}.to raise_error(ArgumentError)
+        expect {subject.set_to -1.6}.to raise_error(ArgumentError)
       end
     end
 
@@ -205,6 +206,12 @@ module Tabletop
         Coin.new(value:0).heads?.should be_false
       end
     end
+    
+    describe "#set_to_heads" do
+      it "sets #value to 1" do
+        Coin.new(value:0).set_to_heads.value.should eq 1
+      end
+    end
 
     describe "tails?" do
       it "is true if #value is 0" do
@@ -212,13 +219,15 @@ module Tabletop
         Coin.new(value:1).tails?.should be_false
       end
     end
+
+    describe "#set_to_tails" do
+      it "sets #value to 0" do
+        Coin.new(value:1).set_to_tails.value.should eq 0
+      end
+    end
     
     describe "#flip" do
-      it {subject.flip.should be_instance_of(Coin)}
-      it "should alias roll" do
-        subject.should_receive(:roll)
-        subject.flip
-      end
+      it "should alias roll"
     end
     
     describe "#to_s" do
