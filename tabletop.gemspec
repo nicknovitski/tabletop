@@ -27,12 +27,8 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rr'
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rdoc'
-  s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'guard-bundler'
   s.add_development_dependency 'guard-rspec'
 end
 
