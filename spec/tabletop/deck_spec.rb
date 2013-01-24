@@ -23,11 +23,11 @@ module Tabletop
       deck
     end
     it "defaults to having zero of things" do
-      subject["Random Object"].should == 0
+      expect(subject["Random Object"]).to eq 0
     end
     describe "#deck_size" do
         it "counts all the cards" do
-          d.deck_size.should == 60
+          expect(d.deck_size).to eq 60
         end
       end
       describe "<<" do
@@ -39,18 +39,18 @@ module Tabletop
           deck_b["card B"] =2
           deck_b["card C"] =2
           merged_deck = deck_a.merge(deck_b) {|k,o,n| o+n}
-          (deck_a << deck_b).should == merged_deck
+          expect((deck_a << deck_b)).to eq merged_deck
         end
       end
       describe "#draw" do
         it "returns a deck containing a random card and decrements that card's copy count in the calling object" do
           srand(1841922)
-          d.draw.should == {"Acidic Slime"=>1}
-          d["Acidic Slime"].should == 3
+          expect(d.draw).to eq "Acidic Slime"=>1
+          expect(d["Acidic Slime"]).to eq 3
         end
         context "with one parameter" do
           it "returns that many cards" do
-            d.draw(3).length.should == 3
+            expect(d.draw(3).length).to eq 3
           end
           it "raises an exception when you try to draw too many" do
             expect {d.draw(61)}.to raise_error DrawMoreCardsThanDeckHasError
@@ -59,18 +59,20 @@ module Tabletop
         context "when passed a block " do
           it "returns a random card for which the block returns true" do
             srand(1841922)
-            d.draw {|card, copies| true}.should == {"Acidic Slime"=>1}
+            expect(d.draw {|card, copies| true}).to eq "Acidic Slime"=>1
             srand(1841922)
-            d.draw do |card, copies|
+            card = d.draw do |card, copies|
               card == "Forest" or card == "Island" or card == "Mountain"
-            end.should == {"Mountain"=> 1}
+            end
+            expect(card).to eq "Mountain"=> 1
           end
           it "returns nil if the card is not present" do
             srand(1841922)
-            d.draw {|card, copies| false}.should be_nil
-            d.draw do |card, copies|
+            expect(d.draw {|card, copies| false}).to be_nil
+            card = d.draw do |card, copies|
               card == "Sir Not Appearing in this Test"
-            end.should be_nil
+            end
+            expect(card).to be_nil
           end
         end
       end
@@ -79,15 +81,15 @@ module Tabletop
           it "returns the odds of drawing that card from the deck" do
             size = d.deck_size
             d.each do |card,copies|
-              d.chance_to_draw(card).should == Float(copies)/size
+              expect(d.chance_to_draw(card)).to eq Float(copies)/size
             end
-            d.chance_to_draw("A Card it Doesn't Have").should == 0
+            expect(d.chance_to_draw("A Card it Doesn't Have")).to eq 0
           end
         end
         context "when passed an array of cards" do
           it "returns the odds of drawing all the cards in the array from a draw of {array.length} cards" do
-            d.chance_to_draw(["Acidic Slime"]).should == d.chance_to_draw("Acidic Slime")
-            d.chance_to_draw(["Acidic Slime", "Phyrexian Metamorph"]).should == Float(4*4)/(60*59)
+            expect(d.chance_to_draw(["Acidic Slime"])).to eq d.chance_to_draw("Acidic Slime")
+            expect(d.chance_to_draw(["Acidic Slime", "Phyrexian Metamorph"])).to eq Float(4*4)/(60*59)
           end
         end
     end
@@ -120,9 +122,9 @@ module Tabletop
         end
 
         if hand_size == 7
-          deck.possible_starting_hands.to_a.length.should == guess_hands
+          expect(deck.possible_starting_hands.to_a.length).to eq guess_hands
         else
-          deck.possible_starting_hands(hand_size).to_a.length.should == guess_hands
+          expect(deck.possible_starting_hands(hand_size).to_a.length).to eq guess_hands
         end
       end
       it "enumerates all possible hand of a passed size (default 7)" do
@@ -146,7 +148,7 @@ module Tabletop
         deck["card b"] = 20
         deck.possible_starting_hands.each do |hand|
           chance = deck.chance_to_draw(hand)
-          chance.should <= best_odds
+          expect(chance).to <= best_odds
           best_odds = chance
         end
       end

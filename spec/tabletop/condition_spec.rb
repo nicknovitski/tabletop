@@ -7,8 +7,8 @@ module Tabletop
         c = Condition.new do |p|
           p.sum > 7
         end
-        c.met_by?(DicePool.new("2/6 4/10")).should be_false
-        c.met_by?(DicePool.new("4/8 4/12")).should be_true
+        expect(c.met_by?(DicePool.new("2/6 4/10"))).to be_false
+        expect(c.met_by?(DicePool.new("4/8 4/12"))).to be_true
       end
     end
   end

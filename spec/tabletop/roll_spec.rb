@@ -7,8 +7,8 @@ module Tabletop
       it "accesses the roll's pool" do
         d20 = Roll.new(1.d20) do
         end
-        d20.pool.size.should == 1
-        d20.pool[0].sides.should == 20
+        expect(d20.pool.size).to eq 1
+        expect(d20.pool[0].sides).to eq 20
       end
     end
     
@@ -35,8 +35,8 @@ module Tabletop
             elsif under_fire.pool.sum + cool + mod >= 7
               effect = ["You flinch, hesitate, or stall"]
             end
-            under_fire.result.should == under_fire.pool.sum + cool + mod
-            under_fire.effects.should == effect
+            expect(under_fire.result).to eq under_fire.pool.sum + cool + mod
+            expect(under_fire.effects).to eq effect
           end
         end
       end
@@ -55,20 +55,20 @@ module Tabletop
         
         it "can be instantiated without a complete pool" do
           @exalted.roll(:pool=>6)
-          @exalted.pool.size.should == 6
+          expect(@exalted.pool.size).to eq 6
           @exalted.pool.dice.each do |die|
-            die.sides.should == 10
+            expect(die.sides).to eq 10
           end
           @exalted.roll(:pool=>10)
-          @exalted.pool.size.should == 10
+          expect(@exalted.pool.size).to eq 10
           expect {@exalted.roll}.to raise_error(ArgumentError)
         end
         
         it "can count successes" do
           @exalted.roll(:pool=>10)
           10.times do
-            @exalted.result.should == count_successes(@exalted.pool)
-            @exalted.effects.should ==nil
+            expect(@exalted.result).to eq count_successes(@exalted.pool)
+            expect(@exalted.effects).to be_nil
           end
         end
         
@@ -76,7 +76,7 @@ module Tabletop
           (1..10).each do |i|
             @exalted.roll(:pool=>6, :difficulty=>i)
             effect = (count_successes(@exalted.pool) >= i) ? ["Success"] : nil
-            @exalted.effects.should == effect
+            expect(@exalted.effects).to eq effect
           end
         end
       end
@@ -102,17 +102,17 @@ module Tabletop
         }
         a, b = fist_game.roll.effects
         
-        [1,2].include?(fist_game.result).should be_true
+        expect([1,2].include?(fist_game.result)).to be_true
         
         if fist_game.result == 1
-          a.should == "Rock Paper Scissors"
+          expect(a).to eq "Rock Paper Scissors"
         else
-          a.should == "JanKenPon"
+          expect(a).to eq "JanKenPon"
         end
         
-        b.should be_instance_of(Array)
-        b.length.should == 1
-        b[0].should be_instance_of(String)
+        expect(b).to be_instance_of(Array)
+        expect(b.length).to eq 1
+        expect(b[0]).to be_instance_of(String)
       end
       before :each do
         ill_fortune = Roll.new(1.d10) do
@@ -150,9 +150,9 @@ module Tabletop
         20.times do
           @childhood_event.roll
           if @childhood_event.result >= 9
-            @childhood_event.effects.length.should == 3
+            expect(@childhood_event.effects.length).to eq 3
           else
-            @childhood_event.effects.length.should == 2
+            expect(@childhood_event.effects.length).to eq 2
           end
         end
       end
