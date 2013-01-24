@@ -130,7 +130,8 @@ So, possible results for our cool AW roll:
 Decks are essentially weighted hashes with a random #draw method.  You can put whatever hashable object you like in a
 deck (there's no Card class yet) as a key to a value that indicates the number of copies of that object in the deck.
 
-#draw returns another deck, and reduces the number of cards in the original deck appropriately.
+#### #draw 
+This method returns another deck, and reduces the number of cards in the original deck appropriately.
 
       d = Deck.new
       d["card A"] = 20
