@@ -1,4 +1,4 @@
-# tabletop
+# tabletop [![Code Climate](https://codeclimate.com/github/nicknovitski/tabletop.png)](https://codeclimate.com/github/nicknovitski/tabletop)
 
 Tabletop aims to provide a simple way of describing, automating and tracking the tools and tasks involved in "analog" games, determining results from the motions and properties of various dice and chips.
 
