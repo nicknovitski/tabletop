@@ -4,20 +4,22 @@ module Tabletop
   describe TokenStack do
 
     describe "#count" do
-      it {subject.count.should == 1}
+      it 'defaults to 1' do # uhhhh why? 
+        expect(subject.count).to eq 1
+      end
       
       it "can be set on instantiation" do
         (1..5).each do |v|
-          TokenStack.new(v).count.should == v
+          expect(TokenStack.new(v).count).to eq v
         end
       end
       
       it "is called when stacks are compared to numbers" do
         (1..5).each do |v|
           s = TokenStack.new(v)
-          s.should == v
-          s.should >= v-1
-          s.should <= v+1
+          expect(s).to eq v
+          expect(s).to be >= v-1
+          expect(s).to be <= v+1
         end
       end
     end
@@ -27,14 +29,14 @@ module Tabletop
       context "when called without arguments" do
         it "increases the count by 1" do
           subject.add
-          subject.count.should == 2
+          expect(subject.count).to eq 2
         end
       end
 
       context "when called with one argument" do
         it "increases the count by that argument" do
           subject.add(2)
-          subject.count.should == 3
+          expect(subject.count).to eq 3
           (1..5).each do |i|
             expect {
               subject.add(i)
@@ -44,7 +46,7 @@ module Tabletop
         
         it "casts arguments to integers" do
           subject.add(3.5)
-          subject.count.should == 4
+          expect(subject.count).to eq 4
           expect { subject.add(Object) }.to raise_error(ArgumentError)
         end
         
@@ -57,7 +59,7 @@ module Tabletop
       context "when called without arguments" do
         it "decreases the count by 1" do
           subject.remove
-          subject.count.should == 0
+          expect(subject.count).to eq 0
         end
       end
 
@@ -72,7 +74,7 @@ module Tabletop
         it "casts arguments to integers" do
           subject.count = 2
           subject.remove(Math::E)
-          subject.count.should == 0
+          expect(subject.count).to eq 0
           expect { subject.remove(Object) }.to raise_error(ArgumentError)
         end
         
@@ -112,16 +114,16 @@ module Tabletop
       end
       it "doesn't move any tokens if :to isn't a TokenStack" do
         expect {@a.move(1, :to => [])}.to raise_error ArgumentError
-        @a.count.should == 1
+        expect(@a.count).to eq 1
       end
       it "doesn't move any tokens if no :to option is passed" do
         expect {@a.move(1)}.to raise_error ArgumentError
-        @a.count.should == 1
+        expect(@a.count).to eq 1
       end
       it "doesn't move any tokens if there aren't enough tokens to move" do
         expect {@a.move(2, :to => @b)}.to raise_error NotEnoughTokensError
-        @a.count.should == 1
-        @b.count.should == 1
+        expect(@a.count).to eq 1
+        expect(@b.count).to eq 1
       end
     end
 
@@ -130,7 +132,7 @@ module Tabletop
         it "can be set on instantiation" do
           2.upto(5) do |v|
             s = TokenStack.new(1, max: v)
-            s.max.should == v
+            expect(s.max).to eq v
           end
         end
       end
@@ -161,18 +163,20 @@ module Tabletop
           2.upto(5) do |v|
             s = TokenStack.new(1, max: v)
             s.refresh
-            s.count.should == v
+            expect(s.count).to eq v
           end
         end
       end
     end
     context "with no maximum set" do
       describe "#max" do
-        it {subject.max.should be_nil}
+        it 'is nil' do
+          expect(subject.max).to be_nil
+        end
       end
       describe "#refresh" do
         it "pretends it doesn't exist" do
-          expect{subject.refresh}.should raise_error NoMethodError
+          expect{ subject.refresh }.to raise_error NoMethodError
         end
       end
     end
