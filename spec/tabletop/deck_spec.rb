@@ -128,6 +128,7 @@ module Tabletop
         end
       end
       it "enumerates all possible hand of a passed size (default 7)" do
+        pending 'discovery of the algorithm'
         7.downto(1).each do |hand|
           check_psh(d, hand)
         end
@@ -138,7 +139,6 @@ module Tabletop
         deck.possible_starting_hands.each do |hand|
           thing << [-1*deck.chance_to_draw(hand), hand]
         end
-        p thing.sort
       end
       it "enumerates in descending order of likelihood" do
         pending "discovery of the algorithm"
