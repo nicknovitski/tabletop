@@ -31,7 +31,9 @@ module Tabletop
     
     # Sets the die to a random number n, where 1 <= n <= @sides
     def roll
-      set_to random_value
+      new_val = random_value
+      set_to new_val
+      new_val
     end
     
     # Returns a string in the form "[#value]/d#sides"
@@ -56,10 +58,10 @@ module Tabletop
     def to_int
       value
     end
-    
-    protected
 
     attr_reader :possible_values
+
+    private
 
     def valid_value?(val)
       possible_values.include?(val)
@@ -83,7 +85,6 @@ module Tabletop
       "[#{['-', ' ', '+'][value+1]}]"
     end
   
-    protected
     def possible_values
       [-1, 0, 1]
     end
@@ -120,7 +121,6 @@ module Tabletop
       "(#{[' ', '+'][value]})"
     end
     
-    protected
     def possible_values
       [0,1]
     end

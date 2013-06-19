@@ -11,7 +11,7 @@ module Tabletop
     describe ".new_from_string" do
       it "expects a string in the format 'n/o', where n and o are integers" do
         d = Die.new_from_string('4/5')
- expect(       d.value).to eq 4
+        expect(d.value).to eq 4
         expect(d.sides).to eq 5
         expect {Die.new_from_string('10')}.to raise_error(ArgumentError)
         expect {Die.new_from_string(4/5)}.to raise_error(ArgumentError)
@@ -44,13 +44,6 @@ module Tabletop
     end
     
     describe "#value" do
-      it "should be random on instantiation by default" do 
-        Random.srand(10)
-        expect(Die.new.value).to eq 5
-        expect(Die.new(sides: 10).value).to eq 1
-        expect(Die.new(sides: 50, value: nil).value).to eq 32
-      end
-      
       it "can be set to a given value on instantiation" do
         expect(Die.new(value: 5).value).to eq 5
         expect(Die.new(sides: 10, value: 2).value).to eq 2
@@ -80,29 +73,28 @@ module Tabletop
     end
     
     describe "#roll" do
-      before(:each) do
-        Random.srand(10)
-      end
-      
       context "a die with six sides" do
-        before(:each) do
-          @d6 = Die.new
+        it 'is called on instantiation when no value specified' do
+          subject.should_receive(:roll)
+
+          subject.send(:initialize)
         end
-        
-        it "should return a random result between 1 and @sides" do
-          expect(@d6.roll).to eq 1
-          expect(@d6.roll).to eq 4
-          expect(@d6.roll).to eq 5
+
+        it 'calls #set_to with the results of #possible_values.sample' do
+          subject.possible_values.should_receive(:sample).and_return :random_value
+
+          subject.should_receive(:set_to).with :random_value
+
+          subject.roll
         end
-        
-        it "should alter the value appropriately" do
-          10.times do
-            expect(@d6.roll).to eq @d6.value
-          end
+
+        it "returns the result of #possible_values.sample" do
+          subject.possible_values.should_receive(:sample).and_return 5
+          expect(subject.roll).to be 5
         end
       end
     end
-    
+
     describe "#to_str" do      
       it "should tell you the die's value" do
         5.times do
@@ -133,14 +125,10 @@ module Tabletop
   end
   
   describe FudgeDie do
-    before(:each) do
-      Random.srand(10)
-      @fudge = FudgeDie.new
-    end
     
     describe "#sides" do
       it "is always 3" do
-        expect(@fudge.sides).to eq 3
+        expect(subject.sides).to eq 3
       end
     end
     
@@ -151,10 +139,6 @@ module Tabletop
         end
       end
       
-      it "is randomly rolled if not set" do
-        expect(@fudge.value).to eq 1
-      end
-
       it "can only be -1, 0 or 1" do
         expect {FudgeDie.new(value:2)}.to raise_error(ArgumentError)
         expect {FudgeDie.new(value:"-5")}.to raise_error(ArgumentError)
@@ -164,13 +148,13 @@ module Tabletop
     describe "#set_to" do
       it "can be passed -1, 0, or 1" do
         [-1, 0, 1].each do |v|
-          @fudge.set_to v
-          expect(@fudge.value).to eq v
+          subject.set_to v
+          expect(subject.value).to eq v
         end
       end
       it "cannot be set to anything else" do
-        expect {@fudge.set_to 2}.to raise_error(ArgumentError)
-        expect {@fudge.set_to "-5"}.to raise_error(ArgumentError)
+        expect {subject.set_to 2}.to raise_error(ArgumentError)
+        expect {subject.set_to "-5"}.to raise_error(ArgumentError)
       end
     end
     
