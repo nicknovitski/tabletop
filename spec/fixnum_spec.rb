@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tabletop/fixnum'
 
 module Tabletop
   describe Fixnum do

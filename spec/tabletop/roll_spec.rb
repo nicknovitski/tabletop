@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tabletop/roll'
 
 module Tabletop
   describe Roll do

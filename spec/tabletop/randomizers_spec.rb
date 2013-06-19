@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tabletop/randomizers'
 
 module Tabletop
   describe Die do

@@ -7,7 +7,6 @@ module Tabletop
     # :sides must be greater than or equal to 2.  By default it is 6.
     # :value must be between 1 and :sides, inclusive.  By default it is random.
     def initialize(params={})
-
       if params[:sides].nil?
         @sides = 6
       else

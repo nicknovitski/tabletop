@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'tabletop/condition'
+require 'tabletop/dice_pool'
 
 module Tabletop
   describe Condition do

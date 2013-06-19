@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'tabletop/deck'
 
 module Tabletop
   describe Deck do
