@@ -45,12 +45,13 @@ You may not believe this, but coins are also a special case of die.  Coins have 
 
 Pools are arrays of Dice objects with some extra helpful methods.
 
-The _best_ way to create one is exactly the way you'd expect: the same old d-notation we've been using for decades.  You can even combine them with `+`.
+Tabletop ships with a monkeypatch to fixnum that enables an easy way to build pools with d-notation.  It's not loaded automatically, but you can easily enable it.
 
+    require 'tabletop/d_notation'
     3.d6           #=> [[3]/d6, [3]/d6, [4]/d6]
     2.d10 + 1.d8   #=> [[2]/d10, [6]/d10, [8]/d8]
 
-You can also create them by passing Pool.new a literal array of dice, or (slightly more interesting) a string in die notation.
+You can also create pools by passing Pool.new a literal array of dice, or (slightly more interesting) a string in die notation.
 
 Pool's instance methods are common operations you might do on a pool of dice: summing, counting sets, dropping the lowest or highest valued dice, dropping all _but_ the lowest or highest valued dice, even dropping any dice  a specified list of values. 
 
