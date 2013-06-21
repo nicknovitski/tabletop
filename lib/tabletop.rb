@@ -1,4 +1,3 @@
-require_relative 'tabletop/fixnum'
 require_relative 'tabletop/randomizers'
 require_relative 'tabletop/dice_pool'
 require_relative 'tabletop/roll'
