@@ -3,7 +3,7 @@ require 'tabletop'
 class Fixnum
   
   # Returns a pool of dice of the given sides and size self
-  def dX(sides)
+  def d(sides)
     Tabletop::DicePool.new("#{self}d#{sides}")
   end
   
@@ -12,21 +12,7 @@ class Fixnum
     Tabletop::DicePool.new("#{self}dF")
   end
   
-  # Matches any methods of the form dN, where N > 0, and calls #dX(N)
-  def method_missing(symbol, *args, &block)
-    if symbol =~ /^d(.*)$/ and $1.to_i > 0
-      dX($1.to_i)
-    else
-      super
-    end
-  end
-  
-  # Returns true for :dN, where N.to_i is a number > 0
-  def respond_to?(symbol, include_private = false)
-    if symbol.to_s =~ /^d(.*)$/
-      true if $1.to_i > 0
-    else
-      super
-    end
+  [4,6,8,10,12,20,30,66,100,666,1000,10000].each do |sides|
+    define_method("d#{sides}") { self.d(sides) }
   end
 end

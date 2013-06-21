@@ -3,19 +3,22 @@ require 'tabletop/d_notation'
 
 module Tabletop
   describe Fixnum do
-    describe "#dX" do
+    describe "#d" do
       it "generates a pool of the appropriate size and type" do
-        expect(1.d6).to be_instance_of(DicePool)
-        expect(4.d7.d_notation).to eq ["4d7"]
+        DicePool.should_receive(:new).with("1d6").and_return :pool
+
+        expect(1.d(6)).to be :pool
       end
-      
-      it "raises an exception for invalid method names" do
-        expect {10.dthing}.to raise_error(NoMethodError)
-      end
-      
-      it "shows up in respond_to?(:dN)" do
-        expect(1).to respond_to(:d50)
-        expect(10).to_not respond_to(:dthing)
+    end
+
+    [4,6,8,10,12,20,30,66,100,666,1000,10000].each do |sides|
+      let(:method) { "d#{sides}" }
+      describe "#d#{sides}" do
+        it 'delegates to #d' do
+          DicePool.should_receive(:new).with("1#{method}").and_return :pool
+
+          expect(1.send(method.to_sym)).to be :pool
+        end
       end
     end
     describe "#dF" do

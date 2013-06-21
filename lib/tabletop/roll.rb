@@ -75,7 +75,7 @@ module Tabletop
       @roll_modifier = opts[:modifier] ? opts[:modifier] : 0
       if @die_sides
         if opts[:pool] 
-          @pool = opts[:pool].dX(@die_sides)
+          @pool = opts[:pool].d(@die_sides)
         else
           raise ArgumentError
         end

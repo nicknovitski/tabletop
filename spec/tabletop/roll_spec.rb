@@ -87,17 +87,17 @@ module Tabletop
     
     context "when used like a table" do
       it "can have nested results" do
-        rps = Roll.new(1.d3) {
+        rps = Roll.new(1.d(3)) {
           equals 1, "rock"
           equals 2, "paper"
           equals 3, "scissors"
         }
-        jkp = Roll.new(1.d3) {
+        jkp = Roll.new(1.d(3)) {
           equals 1, "guu"
           equals 2, "choki"
           equals 3, "paa"
         }
-        fist_game = Roll.new(1.d2) {
+        fist_game = Roll.new(1.d(2)) {
           equals 1, "Rock Paper Scissors", rps
           equals 2, "JanKenPon", jkp 
         }
