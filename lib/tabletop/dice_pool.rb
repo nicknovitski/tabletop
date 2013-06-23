@@ -48,7 +48,7 @@ module Tabletop
       if operand.respond_to?(:dice) 
         new_union(operand.dice)
       # if the parameter seems to be a randomizer
-      elsif operand.respond_to?(:roll)
+      elsif operand.respond_to?(:randomize)
         new_union([operand])
       elsif operand.respond_to?(:to_int)
         sum + operand
@@ -201,7 +201,7 @@ module Tabletop
       union = [@dice, array].flatten # avoid using + in implementation of +
       new_pool =[]
       union.each do |die|
-        new_pool << die.class.new(sides:die.sides, value:die.value)
+        new_pool << die.class.new(possible_values:die.possible_values, value:die.value)
       end
       DicePool.new(new_pool)
     end

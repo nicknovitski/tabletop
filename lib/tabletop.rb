@@ -1,4 +1,6 @@
 require_relative 'tabletop/randomizers'
+require_relative 'tabletop/dice'
+require_relative 'tabletop/coin'
 require_relative 'tabletop/dice_pool'
 require_relative 'tabletop/roll'
 require_relative 'tabletop/token'
