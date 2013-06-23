@@ -50,7 +50,8 @@ module Tabletop
         end
         context "with one parameter" do
           it "returns that many cards" do
-            expect(d.draw(3).length).to eq 3
+            hand = d.draw(20)
+            expect(hand.inject(0) { |s,(k,v)| s+v }).to eq 20
           end
           it "raises an exception when you try to draw too many" do
             expect {d.draw(61)}.to raise_error DrawMoreCardsThanDeckHasError
