@@ -1,6 +1,7 @@
 require 'spec_helper'
-require 'tabletop/coin'
-require_relative 'randomizers_spec'
+require_relative 'randomizer_spec'
+
+require 'tabletop/randomizers/coin'
 
 module Tabletop
   describe Coin do

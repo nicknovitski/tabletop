@@ -36,12 +36,12 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
 
   describe '#valid_value?' do
     let(:answer) { double }
-    before do 
+    before do
       subject.stub(:possible_values => double)
     end
     it 'checks if #possible_values includes it' do
       subject.possible_values.stub!(:include?).with(some_value) { answer }
-      
+
       expect(subject.valid_value?(some_value)).to be answer
     end
   end
@@ -62,7 +62,7 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
       end
     end
   end
-  
+
   describe '#set_to' do
     it 'calls #value= with the passed parameter' do
       subject.stub!(:value=).with(some_value)
@@ -91,17 +91,10 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
     end
   end
 end
-  
+
 module Tabletop
   describe Randomizer do
     subject { Randomizer.new(:possible_values => 1..6) }
     it_behaves_like 'a randomizer'
-    let(:some_value) { double }
-
-  end
-
-  describe NumericRandomizer do
-    describe '#to_i'
-    describe '#<=>'
   end
 end

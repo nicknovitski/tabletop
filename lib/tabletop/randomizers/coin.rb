@@ -1,4 +1,4 @@
-require_relative 'randomizers'
+require_relative 'randomizer'
 require 'set'
 
 module Tabletop
