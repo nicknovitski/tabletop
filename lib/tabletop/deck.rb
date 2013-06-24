@@ -35,7 +35,7 @@ module Tabletop
           if running_weight < n && n <= running_weight + weight
             self[card] -= 1
             drawable_cards[card] -= 1
-            drawn << card
+            drawn[card] += 1
           end
           running_weight += weight
         end
