@@ -6,13 +6,28 @@ module Tabletop
     let(:d6_set) { DicePool.new("2/6 1/6 3/6 4/6 5/6 6/6") }
     
     describe ".new" do
-      it "can accept a string of d-notation" do
-        p = DicePool.new("2d10 d20")
-        expect(p.size).to eq 3
-        expect(p[0].sides).to eq 10
-        expect(p[1].sides).to eq 10
-        expect(p[2].sides).to eq 20
+      context 'when passed a string in d-notation' do
+        it "can build a pool of the described dice" do
+          p = DicePool.new("2d10 d20")
+          expect(p.size).to eq 3
+          expect(p[0].sides).to eq 10
+          expect(p[1].sides).to eq 10
+          expect(p[2].sides).to eq 20
+        end
+
+        it 'recognizes fudge dice' do
+          expect(DicePool.new("1.dF")[0]).to be_a FudgeDie
+        end
+
+        it 'recognizes d66' do
+          expect(DicePool.new('1.d66')[0]).to be_a D66
+        end
+
+        it 'recognizes d66' do
+          expect(DicePool.new('1.d666')[0]).to be_a D666
+        end
       end
+
       it "can accept an array of dice objects" do
         # mostly used internally
         p = DicePool.new([Die.new(value: 1), Die.new(sides: 4)])

@@ -26,7 +26,11 @@ module Tabletop
             number, sides = d.split('d')
             number = number.to_i
             number += 1 if number == 0
-            if sides.to_i > 0
+            if sides.to_i == 66
+              number.times { @dice << D66.new }
+            elsif sides.to_i == 666
+              number.times { @dice << D666.new }
+            elsif sides.to_i > 0
               number.times { @dice << Die.new(sides: sides.to_i)}
             elsif sides == "F"
               number.times { @dice << FudgeDie.new}
