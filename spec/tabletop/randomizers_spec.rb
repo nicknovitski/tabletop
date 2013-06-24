@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'tabletop/randomizers'
 
-shared_examples_for 'a randomizer' do |possible_values|
+shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
   let(:some_value) { double }
   describe '#random_value' do
     it 'calls #sample on #possible_values' do
@@ -75,17 +75,19 @@ shared_examples_for 'a randomizer' do |possible_values|
     end
   end
 
-  describe '#randomize' do
-    it 'calls #value= with #random_value' do
-      subject.stub(:random_value => some_value)
+  ([:randomize] + Array(randomize_aliases)).each do |meth|
+    describe "##{meth}" do
+      it 'calls #value= with #random_value' do
+        subject.stub(:random_value => some_value)
 
-      subject.should_receive(:value=).with(some_value)
+        subject.should_receive(:value=).with(some_value)
 
-      subject.randomize
-    end
+        subject.send(meth)
+      end
 
-    it 'returns self' do
-      expect(subject.randomize).to be subject
+      it 'returns self' do
+        expect(subject.send(meth)).to be subject
+      end
     end
   end
 end

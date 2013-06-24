@@ -4,7 +4,7 @@ require_relative 'randomizers_spec'
 
 module Tabletop
   describe Coin do
-    it_behaves_like 'a randomizer', [0,1]
+    it_behaves_like 'a randomizer', :flip, [0,1]
 
     describe "heads?" do
       it "is true if #value is 1" do
@@ -30,10 +30,6 @@ module Tabletop
       it "sets #value to 0" do
         expect(Coin.new(value:1).set_to_tails.value).to eq 0
       end
-    end
-
-    describe "#flip" do
-      it 'aliases #randomize'
     end
 
     describe "#to_s" do

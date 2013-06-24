@@ -4,7 +4,8 @@ require_relative 'randomizers_spec'
 
 module Tabletop
   describe Die do
-    it_behaves_like 'a randomizer'
+    it_behaves_like 'a randomizer', :roll
+
     describe ".new_from_string" do
       it "expects a string in the format 'n/o', where n and o are integers" do
         d = Die.new_from_string('4/5')
@@ -63,10 +64,6 @@ module Tabletop
       end
     end
 
-    describe "#roll" do
-      it 'is an alias to #randomize'
-    end
-
     describe "#to_str" do      
       it "should tell you the die's value" do
         5.times do
@@ -101,7 +98,7 @@ module Tabletop
   end
 
   describe FudgeDie do
-    it_behaves_like 'a randomizer', [-1,0,1]
+    it_behaves_like 'a randomizer', :roll, [-1,0,1]
 
     describe "#sides" do
       it "is always 3" do
