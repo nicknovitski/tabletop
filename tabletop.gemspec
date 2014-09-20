@@ -16,12 +16,9 @@ Gem::Specification.new do |s|
     'README.markdown',
   ]
 
-  s.required_rubygems_version = '>= 1.3.7'
-  s.specification_version = 3
-
   ignores = File.readlines(".gitignore").grep(/\S+/).map {|s| s.chomp }
   dotfiles = [".gitignore"]
-  
+
   s.files = Dir["**/*"].reject {|f| File.directory?(f) || ignores.any? {|i| File.fnmatch(i, f) } } + dotfiles
   s.test_files = s.files.grep(/^spec\//)
   s.require_paths = ['lib']
