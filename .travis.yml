@@ -1,11 +1,5 @@
 language: ruby
-
 rvm:
-  - 1.9.2
   - 1.9.3
-
-branches:
-  only:
-    - master
-
-script: bundle exec rspec spec
+  - 2.0.0
+  - 2.1.2
