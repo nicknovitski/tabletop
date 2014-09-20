@@ -50,16 +50,21 @@ module Tabletop
     end
 
     describe "#set_to" do
-      it "can only be set to i, where 0 < i <= sides" do
+      it "rejects zero" do
+        expect { Die.new.set_to(0) }.to raise_error(ArgumentError)
+      end
+      it "rejects negative numbers" do
+        expect { Die.new.set_to(-1) }.to raise_error(ArgumentError)
+      end
+      it "rejects numbers greater than #sides" do
+        d = Die.new
+        expect { d.set_to(d.sides + 1) }.to raise_error(ArgumentError)
+      end
+      it "accepts i, where 0 < i <= #sides" do
         [4, 6, 10].each do |type|
           d = Die.new(sides: type)
-          -10.upto(15).each do |v|
-            if v < 1 or v > type
-              expect { d.set_to v }.to raise_error(ArgumentError)
-            else
-              d.set_to v
-              expect(d.value).to eq v
-            end
+          (1..type).each do |v|
+            expect(d.set_to(v).value).to eq v
           end
         end
       end
