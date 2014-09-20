@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative 'randomizer_spec'
+require 'shared_examples_for_randomizers'
 
 require 'tabletop/randomizers/coin'
 

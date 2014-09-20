@@ -1,7 +1,8 @@
 require 'spec_helper'
+require 'shared_examples_for_randomizers'
+
 require 'tabletop/randomizers/fudge_die'
 
-require_relative 'randomizer_spec'
 module Tabletop
 RSpec.describe FudgeDie do
     it_behaves_like 'a randomizer', :roll, [-1,0,1]

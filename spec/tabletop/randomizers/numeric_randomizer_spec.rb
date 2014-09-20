@@ -1,7 +1,7 @@
-require 'tabletop/randomizers/numeric_randomizer'
-
 require 'spec_helper'
-require_relative 'randomizer_spec'
+require 'shared_examples_for_randomizers'
+
+require 'tabletop/randomizers/numeric_randomizer'
 
 module Tabletop
   RSpec.describe NumericRandomizer do
