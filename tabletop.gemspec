@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.date = '2011-08-10'
   s.authors = ['Nick Novitski']
   s.email = 'nicknovitski@gmail.com'
-  s.homepage = 'http://github.com/njay/tabletop'
+  s.homepage = 'http://github.com/nicknovitski/tabletop'
   s.summary = 'An RPG and tabletop game library'
   s.description = 'Tabletop aims to provide a simple way of describing, automating and tracking the tools and tasks involved in "analog" games, determining results from the motions and properties of various dice and chips.'
   s.extra_rdoc_files = [
