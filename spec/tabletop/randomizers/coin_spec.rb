@@ -4,13 +4,13 @@ require_relative 'randomizer_spec'
 require 'tabletop/randomizers/coin'
 
 module Tabletop
-  describe Coin do
+  RSpec.describe Coin do
     it_behaves_like 'a randomizer', :flip, [0,1]
 
     describe "heads?" do
       it "is true if #value is 1" do
-        expect(Coin.new(value:1).heads?).to be_true
-        expect(Coin.new(value:0).heads?).to be_false
+        expect(Coin.new(value:1).heads?).to be true
+        expect(Coin.new(value:0).heads?).to be false
       end
     end
 
@@ -22,8 +22,8 @@ module Tabletop
 
     describe "tails?" do
       it "is true if #value is 0" do
-        expect(Coin.new(value:0).tails?).to be_true
-        expect(Coin.new(value:1).tails?).to be_false
+        expect(Coin.new(value:0).tails?).to be true
+        expect(Coin.new(value:1).tails?).to be false
       end
     end
 

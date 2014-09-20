@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tabletop/randomizers/d66'
 
 module Tabletop
-  describe D66 do
+  RSpec.describe D66 do
     describe '#possible_values' do
       it 'is all the two-digit combinations of 1 to 6' do
         expect(subject.possible_values).to eq [

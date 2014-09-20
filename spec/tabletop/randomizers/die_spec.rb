@@ -4,7 +4,7 @@ require 'spec_helper'
 require_relative 'randomizer_spec'
 
 module Tabletop
-  describe Die do
+  RSpec.describe Die do
     it_behaves_like 'a randomizer', :roll
 
     describe ".new_from_string" do
@@ -82,7 +82,7 @@ module Tabletop
 
     describe "<=>" do
       it "compares numeric objects with the die's value" do
-        subject.stub(:value => 3)
+        allow(subject).to receive(:value).and_return(3)
         expect(subject).to be < 4
         expect(subject).to be > 2.0
       end

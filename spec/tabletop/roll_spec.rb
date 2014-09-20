@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tabletop/roll'
 
 module Tabletop
-  describe Roll do
+  RSpec.describe Roll do
     
     describe "#pool" do
       it "accesses the roll's pool" do
@@ -103,7 +103,7 @@ module Tabletop
         }
         a, b = fist_game.roll.effects
         
-        expect([1,2].include?(fist_game.result)).to be_true
+        expect([1,2].include?(fist_game.result)).to be true
         
         if fist_game.result == 1
           expect(a).to eq "Rock Paper Scissors"

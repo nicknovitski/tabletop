@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'tabletop/d_notation'
 
 module Tabletop
-  describe Fixnum do
+  RSpec.describe Fixnum do
     describe "#d" do
       it "generates a pool of the appropriate size and type" do
-        DicePool.should_receive(:new).with("1d6").and_return :pool
+        expect(DicePool).to receive(:new).with("1d6").and_return :pool
 
         expect(1.d(6)).to be :pool
       end
@@ -15,7 +15,7 @@ module Tabletop
       let(:method) { "d#{sides}" }
       describe "#d#{sides}" do
         it 'delegates to #d' do
-          DicePool.should_receive(:new).with("1#{method}").and_return :pool
+          expect(DicePool).to receive(:new).with("1#{method}").and_return :pool
 
           expect(1.send(method.to_sym)).to be :pool
         end
@@ -25,7 +25,7 @@ module Tabletop
       it "generates a pool of fudge dice" do
         sotc = 4.dF
         expect(sotc).to be_instance_of(DicePool)
-        expect(sotc.all? { |d| d.instance_of?(FudgeDie) }).to be_true
+        expect(sotc.all? { |d| d.instance_of?(FudgeDie) }).to be true
         expect(sotc.d_notation).to eq ["4dF"]
       end
     end

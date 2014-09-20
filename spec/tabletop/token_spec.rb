@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Tabletop
-  describe TokenStack do
+  RSpec.describe TokenStack do
 
     describe "#count" do
       it 'defaults to 1' do # uhhhh why? 

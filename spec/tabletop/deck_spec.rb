@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tabletop/deck'
 
 module Tabletop
-  describe Deck do
+  RSpec.describe Deck do
     let(:d) do
       deck = Deck.new
       deck["Forest"] = 8
@@ -129,7 +129,7 @@ module Tabletop
         end
       end
       it "enumerates all possible hand of a passed size (default 7)" do
-        pending 'discovery of the algorithm'
+        skip 'discovery of the algorithm'
         7.downto(1).each do |hand|
           check_psh(d, hand)
         end
@@ -142,7 +142,7 @@ module Tabletop
         end
       end
       it "enumerates in descending order of likelihood" do
-        pending "discovery of the algorithm"
+        skip "discovery of the algorithm"
         best_odds = 1
         deck = Deck.new
         deck["card a"] = 20

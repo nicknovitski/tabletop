@@ -1,21 +1,21 @@
 require 'spec_helper'
 require 'tabletop/randomizers'
 
-shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
+RSpec.shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
   let(:some_value) { double }
   describe '#random_value' do
     it 'calls #sample on #possible_values' do
-      subject.stub_chain(:possible_values, :sample) { some_value }
+      allow(subject).to receive_message_chain(:possible_values, :sample) { some_value }
 
       expect(subject.random_value).to be some_value
     end
   end
 
   describe '#value' do
-    before { described_class.any_instance.stub(:valid_value? => true) }
+    before { allow_any_instance_of(described_class).to receive(:valid_value?).and_return(true) }
 
     it 'defaults to #random_value' do
-      described_class.any_instance.stub(:random_value => double)
+      allow_any_instance_of(described_class).to receive(:random_value).and_return(double)
 
       expect(subject.value).to be subject.random_value
     end
@@ -37,10 +37,10 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
   describe '#valid_value?' do
     let(:answer) { double }
     before do
-      subject.stub(:possible_values => double)
+      allow(subject).to receive(:possible_values).and_return(double)
     end
     it 'checks if #possible_values includes it' do
-      subject.possible_values.stub!(:include?).with(some_value) { answer }
+      allow(subject.possible_values).to receive(:include?).with(some_value) { answer }
 
       expect(subject.valid_value?(some_value)).to be answer
     end
@@ -48,13 +48,13 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
 
   describe '#value=' do
     context 'when passed an invalid value' do
-      before { described_class.any_instance.stub(:valid_value? => false) }
+      before { allow_any_instance_of(described_class).to receive(:valid_value?).and_return(false) }
       it 'raises ArgumentError' do
         expect {subject.value = 1}.to raise_exception(ArgumentError)
       end
     end
     context 'when passed a valid value' do
-      before { described_class.any_instance.stub(:valid_value? => true) }
+      before { allow_any_instance_of(described_class).to receive(:valid_value?).and_return(true) }
       it 'sets #value to that' do
         subject.value = some_value
 
@@ -65,7 +65,7 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
 
   describe '#set_to' do
     it 'calls #value= with the passed parameter' do
-      subject.stub!(:value=).with(some_value)
+      allow(subject).to receive(:value=).with(some_value)
 
       subject.set_to(some_value)
     end
@@ -78,9 +78,9 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
   ([:randomize] + Array(randomize_aliases)).each do |meth|
     describe "##{meth}" do
       it 'calls #value= with #random_value' do
-        subject.stub(:random_value => some_value)
+        allow(subject).to receive(:random_value).and_return(some_value)
 
-        subject.should_receive(:value=).with(some_value)
+        expect(subject).to receive(:value=).with(some_value)
 
         subject.send(meth)
       end
@@ -93,7 +93,7 @@ shared_examples_for 'a randomizer' do |randomize_aliases, possible_values |
 end
 
 module Tabletop
-  describe Randomizer do
+  RSpec.describe Randomizer do
     subject { Randomizer.new(:possible_values => 1..6) }
     it_behaves_like 'a randomizer'
   end

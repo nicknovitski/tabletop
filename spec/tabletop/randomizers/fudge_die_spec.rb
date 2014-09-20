@@ -3,7 +3,7 @@ require 'tabletop/randomizers/fudge_die'
 
 require_relative 'randomizer_spec'
 module Tabletop
-describe FudgeDie do
+RSpec.describe FudgeDie do
     it_behaves_like 'a randomizer', :roll, [-1,0,1]
 
     describe "#sides" do

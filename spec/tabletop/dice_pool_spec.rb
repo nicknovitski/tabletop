@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Tabletop
-  describe DicePool do
+  RSpec.describe DicePool do
 
     let(:d6_set) { DicePool.new("2/6 1/6 3/6 4/6 5/6 6/6") }
     
@@ -86,8 +86,8 @@ module Tabletop
         it "should make new die objects" do
           die1, die2 = Die.new, Die.new
           merge = DicePool.new([die1])+DicePool.new([die2])
-          die1.should_not_receive :roll
-          die2.should_not_receive :roll
+          expect(die1).not_to receive :roll
+          expect(die2).not_to receive :roll
           merge.roll
         end
         it "should persist die types" do
@@ -135,9 +135,9 @@ module Tabletop
     describe "#roll" do
       before :each do
         @d1, @d2, @d3= double("a die"), double("a die"), double("a die")
-        @d1.stub(:value).and_return(1)
-        @d2.stub(:value).and_return(2)
-        @d3.stub(:value).and_return(3)
+        allow(@d1).to receive(:value).and_return(1)
+        allow(@d2).to receive(:value).and_return(2)
+        allow(@d3).to receive(:value).and_return(3)
         @p = DicePool.new([@d1, @d2, @d3])
         end
       it "should return the Pool itself" do
@@ -149,24 +149,24 @@ module Tabletop
       end
 
       it "calls roll on its contents" do
-        [@d1,@d2,@d3].map { |d| d.should_receive(:roll)}
+        [@d1,@d2,@d3].map { |d| expect(d).to receive(:roll)}
         @p.roll
       end
       it "can roll only dice less than a certain value" do
-        [@d2,@d3].map { |d| d.should_not_receive(:roll)}
-        @d1.should_receive(:roll)
+        [@d2,@d3].map { |d| expect(d).not_to receive(:roll)}
+        expect(@d1).to receive(:roll)
 
         @p.roll(:value_under=>2)
       end
       it "can roll only dice above a certain value" do
-        [@d1,@d2].map { |d| d.should_not_receive(:roll)}
-        @d3.should_receive(:roll)
+        [@d1,@d2].map { |d| expect(d).not_to receive(:roll)}
+        expect(@d3).to receive(:roll)
 
         @p.roll(:value_over=>2)
       end
       it "can roll only dice equal to a certain value" do
-        [@d1,@d3].map { |d| d.should_not_receive(:roll)}
-        @d2.should_receive(:roll)
+        [@d1,@d3].map { |d| expect(d).not_to receive(:roll)}
+        expect(@d2).to receive(:roll)
 
         @p.roll(:value_equals=>2)
       end
@@ -178,19 +178,19 @@ module Tabletop
         @d2 = double("a die")
       end
       it "rolls dice when the block returns true" do
-        @d1.should_receive(:roll)
+        expect(@d1).to receive(:roll)
         DicePool.new([@d1]).roll_if {|die| true}
       end
       it "doesn't roll dice when the block returns false" do
-        @d1.should_not_receive(:roll)
+        expect(@d1).not_to receive(:roll)
         DicePool.new([@d1]).roll_if {|die| false}
       end
       it "rolls dice that satisfy the block condition" do
-        @d1.stub(:sides).and_return(3)
-        @d2.stub(:sides).and_return(4)
+        allow(@d1).to receive(:sides).and_return(3)
+        allow(@d2).to receive(:sides).and_return(4)
 
-        @d1.should_not_receive(:roll)
-        @d2.should_receive(:roll)
+        expect(@d1).not_to receive(:roll)
+        expect(@d2).to receive(:roll)
 
         DicePool.new([@d1, @d2]).roll_if {|die| die.sides > 3}
       end

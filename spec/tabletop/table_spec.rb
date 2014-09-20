@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'tabletop/table'
 
 module Tabletop
-  describe Table do
+  RSpec.describe Table do
 
     context 'when initialized with a hash' do
       let(:atmo_hash) {

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'tabletop/randomizers/d666'
 
 module Tabletop
-  describe D666 do
+  RSpec.describe D666 do
     describe '#possible_values' do
       it 'is all the three-digit combinations of 1 to 6' do
         (100..600).step(100) do |hundreds|
